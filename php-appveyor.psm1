@@ -44,7 +44,7 @@ function InstallPhpSdk {
 	}
 
 	EnsureRequiredDirectoriesPresent `
-		-Directories "bin,lib,include" `
+		-Directories bin,lib,include `
 		-Prefix "${InstallPath}\phpdev\vc${VC}\${Platform}"
 }
 
