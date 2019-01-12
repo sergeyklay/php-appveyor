@@ -2,6 +2,7 @@ version: 1.0.0+{build}
 
 environment:
   matrix:
+
     - PHP_VERSION: 7.3
       VC_VERSION: 15
       BUILD_TYPE: nts-Win32
@@ -24,7 +25,7 @@ platform:
 install:
   - ps: Import-Module .\php-appveyor.psm1
   - ps: InstallPhpSdk $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
-  - ps: InstallPhp $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
+  - ps: InstallPhp    $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
 # init:
 build_script:
