@@ -1,0 +1,33 @@
+version: 1.0.0+{build}
+
+environment:
+  matrix:
+    - PHP_VERSION: 7.3
+      VC_VERSION: 15
+      BUILD_TYPE: nts-Win32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+  PHP_SDK_VERSION: 2.1.9
+
+matrix:
+  fast_finish: true
+
+clone_depth: 1
+clone_folder: c:\projects\php-appveyor
+
+platform:
+  - x64
+
+install:
+  - ps: Import-Module .\php-appveyor.psm1
+  - ps: InstallPhpSdk $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
+
+# init:
+# build_script:
+
+test_script:
+  - DIR C:\
+  - DIR C:\php-sdk
+  - DIR C:\php-sdk\phpdev
+  - DIR C:\php-sdk\phpdev\vc%VC_VERSION%\
+  - DIR C:\php-sdk\phpdev\vc%VC_VERSION%\%PLATFORM%
