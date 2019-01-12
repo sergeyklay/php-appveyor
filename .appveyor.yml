@@ -23,10 +23,10 @@ install:
   - ps: InstallPhpSdk $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
 
 # init:
-# build_script:
+build_script:
+  - DIR C:\
 
 test_script:
-  - DIR C:\
   - DIR C:\php-sdk
   - DIR C:\php-sdk\phpdev
   - DIR C:\php-sdk\phpdev\vc%VC_VERSION%\
