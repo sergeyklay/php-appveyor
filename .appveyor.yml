@@ -12,6 +12,9 @@ environment:
 matrix:
   fast_finish: true
 
+cache:
+  - 'C:\Downloads -> .appveyor.yml'
+
 clone_depth: 1
 clone_folder: C:\Projects\php-appveyor
 
@@ -21,13 +24,11 @@ platform:
 install:
   - ps: Import-Module .\php-appveyor.psm1
   - ps: InstallPhpSdk $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
+  - ps: InstallPhp $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
 
 # init:
 build_script:
-  - DIR C:\
+  - DIR C:\php
 
 test_script:
-  - DIR C:\php-sdk
-  - DIR C:\php-sdk\phpdev
-  - DIR C:\php-sdk\phpdev\vc%VC_VERSION%\
-  - DIR C:\php-sdk\phpdev\vc%VC_VERSION%\%PLATFORM%
+  - C:\php\php.exe -v

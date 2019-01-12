@@ -48,33 +48,35 @@ function InstallPhpSdk {
 		-Prefix "${InstallPath}\phpdev\vc${VC}\${Platform}"
 }
 
-# function InstallPhp {
-# 	param (
-# 		[Parameter(Mandatory=$true)]  [System.String] $Version,
-# 		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
-# 		[Parameter(Mandatory=$true)]  [System.String] $VC,
-# 		[Parameter(Mandatory=$true)]  [System.String] $Platform,
-# 		[Parameter(Mandatory=$false)] [System.String] $SdkPath = "C:\php-sdk"
-# 	)
+function InstallPhp {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Version,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $VC,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php"
+	)
 
-# 	$Version = SetupPhpVersionString -Pattern $Version
-# 	Write-Host "Install PHP: ${Version}"
+	SetupPrerequisites
+	$Version = SetupPhpVersionString -Pattern $Version
 
-# 	$RemoteUrl = "${PHP_URI}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
-# 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
+	Write-Host "Install PHP: ${Version}"
 
-# 	if (-not (Test-Path $InstallPath)) {
-# 		if (-not [System.IO.File]::Exists($Archive)) {
-# 			DownloadFile $RemoteUrl $Archive
-# 		}
+	$RemoteUrl = "${PHP_URI}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
-# 		Expand-Item7zip -Archive $Archive -Destination $InstallPath
-# 	}
+	if (-not (Test-Path $InstallPath)) {
+		if (-not [System.IO.File]::Exists($Archive)) {
+			DownloadFile $RemoteUrl $Archive
+		}
 
-# 	if (-not (Test-Path "${InstallPath}\php.ini")) {
-# 		Copy-Item "${InstallPath}\php.ini-development" "${InstallPath}\php.ini"
-# 	}
-# }
+		Expand-Item7zip -Archive $Archive -Destination $InstallPath
+	}
+
+	if (-not (Test-Path "${InstallPath}\php.ini")) {
+		Copy-Item "${InstallPath}\php.ini-development" "${InstallPath}\php.ini"
+	}
+}
 
 function SetupPhpVersionString {
 	param (
