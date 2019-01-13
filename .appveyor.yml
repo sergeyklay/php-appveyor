@@ -48,7 +48,7 @@ build_script:
   - ps: EnablePhpExtension -Name psr
 
 test_script:
-  - ps: (& C:\php\php.exe -m)
+  - ps: (& C:\php\php.exe --ri psr)
 
 on_success:
   - ps: >-
