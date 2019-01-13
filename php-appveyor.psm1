@@ -150,7 +150,7 @@ function InstallPeclExtension {
 			DownloadFile $RemoteUrl $DestinationPath
 		}
 
-		Expand-Item7zip $DestinationPath "${Env:PHP_PATH}\ext"
+		Expand-Item7zip $DestinationPath "${InstallPath}"
 	}
 }
 
