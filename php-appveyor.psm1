@@ -387,7 +387,12 @@ function EnsurePandocIsInstalled {
 		$Env:Path += ";$PandocInstallationDirectory"
 	}
 
-	& "pandoc" -v
+	$Output = (& "pandoc" -v)
+	$ExitCode = $LASTEXITCODE
+
+	If ($ExitCode -ne 0) {
+		throw "An error occurred while self testing pandoc. ${Output}"
+	}
 }
 
 function EnsureRequiredDirectoriesPresent {
