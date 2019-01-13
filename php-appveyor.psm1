@@ -130,9 +130,6 @@ function InstallPeclExtension {
 		}
 
 		Expand-Item7zip $DestinationPath $InstallPath
-
-		$AllExts = Get-ChildItem -Path $InstallPath
-		Write-Debug "Extension directory contents: ${AllExts}"
 	}
 }
 
@@ -144,7 +141,7 @@ function EnablePhpExtension {
 		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
 	)
 
-	$FullyQualifiedExtensionPath = "${ExtPath}\${Prefix}${Name}.dll"
+	$FullyQualifiedExtensionPath = "${ExtPath}\php_${Name}.dll"
 
 	$IniFile = "${PhpPath}\php.ini"
 	$PhpExe  = "${PhpPath}\php.exe"
