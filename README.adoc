@@ -14,10 +14,10 @@ Add the following to your ``.appveyor.yml``:
 [source,yml]
 ----
 environment:
-  # Use this matrix item as an example
+  # Use this matrix as an example
   matrix:
 
-    # Specify buld matrix for your app
+    # Specify matrix item for your app
     - PHP_VERSION: 7.3
       VC_VERSION: 15
       BUILD_TYPE: nts-Win32
@@ -26,6 +26,7 @@ environment:
   # Specify required PHP SDK binary tools if you need SDK
   PHP_SDK_VERSION: 2.1.9 # 2
 
+# Cache PHP and tooling
 cache:
   # The C:\Downloads directory will be used as a storage for downloaded archives.
   # So you may want to cache it.

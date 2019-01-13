@@ -6,14 +6,14 @@
 # the LICENSE file that was distributed with this source code.
 
 Set-Variable `
-	-name __PHP_SDK_BASE_URI__ `
+	-name _PHP_SDK_BASE_URI_ `
 	-value "https://github.com/Microsoft/php-sdk-binary-tools" `
 	-Scope Global `
 	-Option ReadOnly `
 	-Force
 
 Set-Variable `
-	-name __PHP_DOWNLOADS_BASE_URI__ `
+	-name _PHP_DOWNLOADS_BASE_URI_ `
 	-value "http://windows.php.net/downloads/releases" `
 	-Scope Global `
 	-Option ReadOnly `
@@ -35,7 +35,7 @@ function InstallPhpSdk {
 	SetupPrerequisites
 
 	$FileName  = "php-sdk-${Version}"
-	$RemoteUrl = "${__PHP_SDK_BASE_URI__}/archive/${FileName}.zip"
+	$RemoteUrl = "${_PHP_SDK_BASE_URI_}/archive/${FileName}.zip"
 	$Archive   = "C:\Downloads\${FileName}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -71,7 +71,7 @@ function InstallPhp {
 
 	Write-Debug "Install PHP v${Version}"
 
-	$RemoteUrl = "${__PHP_DOWNLOADS_BASE_URI__}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$RemoteUrl = "${_PHP_DOWNLOADS_BASE_URI_}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -102,7 +102,7 @@ function InstallPhpDevPack {
 
 	Write-Debug "Install PHP Dev for PHP v${Version}"
 
-	$RemoteUrl = "${PHP_URI}/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$RemoteUrl = "${_PHP_DOWNLOADS_BASE_URI_}/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -125,7 +125,7 @@ function SetupPhpVersionString {
 		[Parameter(Mandatory=$true)] [String] $Pattern
 	)
 
-	$RemoteUrl   = "${__PHP_DOWNLOADS_BASE_URI__}/sha256sum.txt"
+	$RemoteUrl   = "${_PHP_DOWNLOADS_BASE_URI_}/sha256sum.txt"
 	$Destination = "${Env:Temp}\php-sha256sum.txt"
 
 	If (-not [System.IO.File]::Exists($Destination)) {
