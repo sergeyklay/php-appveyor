@@ -59,3 +59,8 @@ on_success:
         -ZipballName    php-appveyor `
         -ReleaseFiles   LICENSE,README.adoc `
         -ConverMdToHtml $true
+
+artifacts:
+  - path: '.\php-appveyor.zip'
+    type: zip
+    name: php-appveyor
