@@ -56,6 +56,6 @@ on_success:
       PrepareReleaseNote `
         -PhpVersion    $Env:PHP_VERSION `
         -BuildType     $Env:BUILD_TYPE `
-        -Platform      $Env:PLATFORM
+        -Platform      $Env:PLATFORM `
         -NoteDirectory package
   - ps: Get-Content "${Env:APPVEYOR_BUILD_FOLDER}\package\RELEASE.txt"
