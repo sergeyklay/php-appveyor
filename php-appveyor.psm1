@@ -154,6 +154,7 @@ function EnablePhpExtension {
 		throw "Unable to locate extension path: ${FullyQualifiedExtensionPath}"
 	}
 
+	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
 	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 
 	if (Test-Path -Path "${PhpExe}") {
@@ -161,7 +162,7 @@ function EnablePhpExtension {
 		$ExitCode = $LASTEXITCODE
 
 		if ($ExitCode -ne 0) {
-			throw "An error occurred while enabling ${Name} at ${IniFile}. Result was ${Result}."
+			throw "An error occurred while enabling ${Name} at ${IniFile}. ${Result}"
 		}
 	}
 }
