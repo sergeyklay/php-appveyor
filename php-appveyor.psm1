@@ -265,14 +265,16 @@ function PrepareReleasePackage {
 		foreach ($File in $ReleaseFiles) {
 			Copy-Item "${File}" "${ReleaseDestination}"
 		}
-	}
 
-	if ($Env:RELEASE_ZIPBALL) {
-		$ZipballName = $Env:RELEASE_ZIPBALL;
+		Copy-Item "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}\${ReleaseFile}" "${ReleaseDestination}"
 	}
 
 	if (!$ZipballName) {
-		throw 'A releaze zipball name is mandatory parameter'
+		if (!$Env:RELEASE_ZIPBALL) {
+			throw "Required parameter `"ZipballName`" is missing"
+		} else {
+			$ZipballName = $Env:RELEASE_ZIPBALL;
+		}
 	}
 
 	Ensure7ZipIsInstalled

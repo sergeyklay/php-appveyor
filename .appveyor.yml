@@ -46,8 +46,6 @@ install:
 
 build_script:
   - ps: EnablePhpExtension -Name psr
-  - ps: EnsureChocolateyIsInstalled
-  - ps: EnsurePandocIsInstalled
 
 test_script:
   - ps: (& C:\php\php.exe -m)
