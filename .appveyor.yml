@@ -51,11 +51,11 @@ test_script:
   - ps: (& C:\php\php.exe -m)
 
 on_success:
-  - ps: InstallBuildDependencies
   - ps: >-
       PrepareReleasePackage `
-        -PhpVersion    $Env:PHP_VERSION `
-        -BuildType     $Env:BUILD_TYPE `
-        -Platform      $Env:PLATFORM `
-        -ZipballName   php-appveyor `
-        -ReleaseFiles  LICENSE,README.adoc
+        -PhpVersion     $Env:PHP_VERSION `
+        -BuildType      $Env:BUILD_TYPE `
+        -Platform       $Env:PLATFORM `
+        -ZipballName    php-appveyor `
+        -ReleaseFiles   LICENSE,README.adoc `
+        -ConverMdToHtml $true

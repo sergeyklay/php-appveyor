@@ -245,7 +245,8 @@ function PrepareReleasePackage {
 		[Parameter(Mandatory=$true)]  [System.String] $Platform,
 		[Parameter(Mandatory=$false)] [System.String] $ZipballName = '',
 		[Parameter(Mandatory=$false)] [System.String[]] $ReleaseFiles = @(),
-		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile = 'RELEASE.txt'
+		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile = 'RELEASE.txt',
+		[Parameter(Mandatory=$false)] [System.Boolean] $ConverMdToHtml = $false
 	)
 
 	$ReleaseDirectory = "${Env:APPVEYOR_PROJECT_NAME}-${Env:APPVEYOR_BUILD_ID}-${Env:APPVEYOR_JOB_ID}-${Env:APPVEYOR_JOB_NUMBER}"
@@ -261,7 +262,10 @@ function PrepareReleasePackage {
 
 	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
 
-	# FormatReleaseFiles
+	if ($ConverMdToHtml) {
+		InstallReleaseDependencies
+		FormatReleaseFiles -ReleaseDirectory $ReleaseDirectory
+	}
 
 	if ($ReleaseFiles.count -gt 0) {
 		foreach ($File in $ReleaseFiles) {
@@ -286,12 +290,32 @@ function PrepareReleasePackage {
 	$DirectoryContents = Get-ChildItem -Path "${ReleaseDestination}"
 	Write-Debug ($DirectoryContents | Out-String)
 
-	If ($ExitCode -ne 0) {
+	if ($ExitCode -ne 0) {
 		Set-Location "${CurrentPath}"
 		throw "An error occurred while creating release zippbal: `"${ZipballName}`". ${Output}"
 	}
 
 	Move-Item "${ZipballName}.zip" -Destination "${Env:APPVEYOR_BUILD_FOLDER}"
+	Set-Location "${CurrentPath}"
+}
+
+function FormatReleaseFiles {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $ReleaseDirectory
+	)
+
+	EnsurePandocIsInstalled
+
+	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
+
+	Set-Location "${Env:APPVEYOR_BUILD_FOLDER}"
+
+	Get-ChildItem (Get-Item -Path ".\" -Verbose).FullName *.md |
+	ForEach-Object{
+		$BaseName = $_.BaseName
+		pandoc -f markdown -t html5 "${BaseName}.md" > "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}\${BaseName}.html"
+	}
+
 	Set-Location "${CurrentPath}"
 }
 
@@ -335,7 +359,7 @@ function Ensure7ZipIsInstalled  {
 	}
 }
 
-function InstallBuildDependencies {
+function InstallReleaseDependencies {
 	EnsureChocolateyIsInstalled
 	$Output = (choco install -y --no-progress pandoc)
 }
