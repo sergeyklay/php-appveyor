@@ -5,27 +5,6 @@
 # For the full copyright and license information, please view
 # the LICENSE file that was distributed with this source code.
 
-Set-Variable `
-	-name _PHP_SDK_BASE_URI_ `
-	-value "https://github.com/Microsoft/php-sdk-binary-tools" `
-	-Scope Global `
-	-Option ReadOnly `
-	-Force
-
-Set-Variable `
-	-name _PHP_DOWNLOADS_BASE_URI_ `
-	-value "http://windows.php.net/downloads/releases" `
-	-Scope Global `
-	-Option ReadOnly `
-	-Force
-
-Set-Variable `
-	-name _PECL_DOWNLOADS_BASE_URI_ `
-	-value "https://windows.php.net/downloads/pecl/releases" `
-	-Scope Global `
-	-Option ReadOnly `
-	-Force
-
 function InstallPhpSdk {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Version,
@@ -38,7 +17,7 @@ function InstallPhpSdk {
 	SetupPrerequisites
 
 	$FileName  = "php-sdk-${Version}"
-	$RemoteUrl = "${_PHP_SDK_BASE_URI_}/archive/${FileName}.zip"
+	$RemoteUrl = "https://github.com/Microsoft/php-sdk-binary-tools/archive/${FileName}.zip"
 	$Archive   = "C:\Downloads\${FileName}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -73,7 +52,7 @@ function InstallPhp {
 
 	Write-Debug "Install PHP v${Version}"
 
-	$RemoteUrl = "${_PHP_DOWNLOADS_BASE_URI_}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$RemoteUrl = "http://windows.php.net/downloads/releases/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -103,7 +82,7 @@ function InstallPhpDevPack {
 
 	Write-Debug "Install PHP Dev for PHP v${Version}"
 
-	$RemoteUrl = "${_PHP_DOWNLOADS_BASE_URI_}/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$RemoteUrl = "http://windows.php.net/downloads/releases/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -133,7 +112,7 @@ function InstallPeclExtension {
 
 	SetupPrerequisites
 
-	$BaseUri = "${_PECL_DOWNLOADS_BASE_URI_}/${Name}/${Version}"
+	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${Version}"
 	$LocalPart = "php_${Name}-${Version}-${PhpVersion}"
 
 	If ($BuildType -Match "nts-Win32") {
@@ -192,7 +171,7 @@ function SetupPhpVersionString {
 		[Parameter(Mandatory=$true)] [String] $Pattern
 	)
 
-	$RemoteUrl   = "${_PHP_DOWNLOADS_BASE_URI_}/sha256sum.txt"
+	$RemoteUrl   = 'http://windows.php.net/downloads/releases/sha256sum.txt'
 	$Destination = "${Env:Temp}\php-sha256sum.txt"
 
 	If (-not [System.IO.File]::Exists($Destination)) {

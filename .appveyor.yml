@@ -51,5 +51,4 @@ build_script:
         -ExtPath C:\php\ext
 
 test_script:
-  - C:\php\php.exe -v
   - C:\php\php.exe -m
