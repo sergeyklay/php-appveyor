@@ -5,6 +5,8 @@
 # For the full copyright and license information, please view
 # the LICENSE file that was distributed with this source code.
 
+$ErrorActionPreference = "Stop"
+
 function InstallPhpSdk {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Version,
@@ -279,8 +281,8 @@ function PrepareReleasePackage {
 
 	Ensure7ZipIsInstalled
 
-	Get-ChildItem -Path "${ReleaseDestination}"
 	Set-Location "${ReleaseDestination}"
+	Get-ChildItem -Path "${ReleaseDestination}"
 	$Output = (& 7z a "${ZipballName}.zip" *.*)
 	$ExitCode = $LASTEXITCODE
 	Get-ChildItem -Path "${ReleaseDestination}"
