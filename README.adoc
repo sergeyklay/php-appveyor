@@ -60,10 +60,10 @@ install:
   # An example to enable PHP extension
   - ps: >-
       EnablePhpExtension `
-        -Name          psr `
-        -PhpPath       C:\php `     # Optional
-        -ExtPath       C:\php\ext ` # Optional
-        -PrintableName psr          # Optional
+        -Name          my_ext `
+        -PhpPath       C:\php `       # Optional
+        -ExtPath       C:\my_ext `    # Optional
+        -PrintableName "My Extension" # Optional
 
 build_script:
   # Your code here
