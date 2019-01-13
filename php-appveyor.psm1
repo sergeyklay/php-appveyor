@@ -6,8 +6,15 @@
 # the LICENSE file that was distributed with this source code.
 
 Set-Variable `
-	-name PHP_SDK_URI `
+	-name __PHP_SDK_BASE_URI__ `
 	-value "https://github.com/Microsoft/php-sdk-binary-tools" `
+	-Scope Global `
+	-Option ReadOnly `
+	-Force
+
+Set-Variable `
+	-name __PHP_DOWNLOADS_BASE_URI__ `
+	-value "http://windows.php.net/downloads/releases" `
 	-Scope Global `
 	-Option ReadOnly `
 	-Force
@@ -26,7 +33,7 @@ function InstallPhpSdk {
 	SetupPrerequisites
 
 	$FileName  = "php-sdk-${Version}"
-	$RemoteUrl = "${PHP_SDK_URI}/archive/${FileName}.zip"
+	$RemoteUrl = "${__PHP_SDK_BASE_URI__}/archive/${FileName}.zip"
 	$Archive   = "C:\Downloads\${FileName}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -62,7 +69,7 @@ function InstallPhp {
 
 	Write-Host "Install PHP: ${Version}"
 
-	$RemoteUrl = "${PHP_URI}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$RemoteUrl = "${__PHP_DOWNLOADS_BASE_URI__}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
@@ -83,7 +90,7 @@ function SetupPhpVersionString {
 		[Parameter(Mandatory=$true)] [String] $Pattern
 	)
 
-	$RemoteUrl   = "${PHP_URI}/sha256sum.txt"
+	$RemoteUrl   = "${__PHP_DOWNLOADS_BASE_URI__}/sha256sum.txt"
 	$Destination = "${Env:Temp}\php-sha256sum.txt"
 
 	If (-not [System.IO.File]::Exists($Destination)) {
