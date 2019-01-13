@@ -47,6 +47,7 @@ install:
 build_script:
   - ps: >-
       EnablePhpExtension -Name psr
+  - ps: EnsurePandocIsInstalled
 
 test_script:
   - ps: (& C:\php\php.exe -m)
@@ -59,5 +60,3 @@ on_success:
         -Platform      $Env:PLATFORM `
         -NoteDirectory package
   - ps: Get-Content "${Env:APPVEYOR_BUILD_FOLDER}\package\RELEASE.txt"
-  - ps: Write-Host ($Env:Path).Replace(';', "`n")
-  - ps: 'Get-ChildItem Env:'

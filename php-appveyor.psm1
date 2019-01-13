@@ -227,14 +227,17 @@ function PrepareReleaseNote {
 	$ReleaseDate = Get-Date -Format g
 
 	$Image = $Env:APPVEYOR_BUILD_WORKER_IMAGE
+	$Version = $Env:APPVEYOR_BUILD_VERSION
+	$Commit = $Env:APPVEYOR_REPO_COMMIT
+	$CommitDate = $Env:APPVEYOR_REPO_COMMIT_TIMESTAMP
 
-	Write-Output "Release date: ${ReleaseDate}"                   | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Release version: ${Env:APPVEYOR_BUILD_VERSION}" | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Git commit: ${Env:APPVEYOR_REPO_COMMIT}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Build type: ${BuildType}"                       | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Platform: ${Platform}"                          | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Target PHP version: ${PhpVersion}"              | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Build worker image: ${Image}"                   | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Release date: ${ReleaseDate}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Release version: ${Version}"              | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Git commit: ${Commit} (at ${CommitDate})" | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build type: ${BuildType}"                 | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Platform: ${Platform}"                    | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Target PHP version: ${PhpVersion}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build worker image: ${Image}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 }
 function SetupPhpVersionString {
 	param (
@@ -274,6 +277,22 @@ function Ensure7ZipIsInstalled  {
 
 		$Env:Path += ";$7zipInstallationDirectory"
 	}
+}
+
+function EnsurePandocIsInstalled {
+	Get-ChildItem -Path "${Env:ChocolateyInstall}\bin"
+
+	if (-not (Get-Command "pandoc" -ErrorAction SilentlyContinue)) {
+		$PandocInstallationDirectory = "${Env:ChocolateyInstall}\bin"
+
+		if (-not (Test-Path "$PandocInstallationDirectory")) {
+			throw "The pandoc is needed to use this module"
+		}
+
+		$Env:Path += ";$PandocInstallationDirectory"
+	}
+
+	& "pandoc" -v
 }
 
 function EnsureRequiredDirectoriesPresent {
@@ -341,7 +360,7 @@ function Expand-Item7zip {
 		New-Item $Destination -ItemType Directory | Out-Null
 	}
 
-	$Result   = (& 7z x "$Archive" "-o$Destination" -aoa -bd -y -r)
+	& 7z x "$Archive" "-o$Destination" -aoa -bd -y -r
 	$ExitCode = $LASTEXITCODE
 
 	If ($ExitCode -ne 0) {
