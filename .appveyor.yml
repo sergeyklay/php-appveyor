@@ -57,5 +57,5 @@ on_success:
         -PhpVersion    $Env:PHP_VERSION `
         -BuildType     $Env:BUILD_TYPE `
         -Platform      $Env:PLATFORM `
-        -ZipballName   demo.zip `
+        -ZipballName   php-appveyor `
         -ReleaseFiles  LICENSE,README.adoc
