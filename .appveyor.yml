@@ -23,8 +23,8 @@ platform:
   - x64
 
 install:
-  #- ps: Import-Module .\php-appveyor.psm1
-  - ps: (new-object Net.WebClient).DownloadString("https://raw.githubusercontent.com/sergeyklay/php-appveyor/master/php-appveyor.psm1") | iex
+  - ps: Import-Module .\php-appveyor.psm1
+  - ps: $DebugPreference = "Continue"
   - ps: InstallPhpSdk     $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM

@@ -21,7 +21,7 @@ Set-Variable `
 
 # By default, debug messages are not displayed in the console,
 # but you can display them by using the Debug parameter or the $DebugPreference variable.
-$DebugPreference = "Continue"
+# $DebugPreference = "Continue"
 
 function InstallPhpSdk {
 	param (
@@ -45,7 +45,7 @@ function InstallPhpSdk {
 
 		$UnzipPath = "${Env:Temp}\php-sdk-binary-tools-${FileName}"
 		If (-not (Test-Path "${UnzipPath}")) {
-			Write-Debug "Unpack to ${UnzipPath}"
+			Write-Debug "Unzip to ${UnzipPath}"
 			Expand-Item7zip -Archive $Archive -Destination $Env:Temp
 		}
 
@@ -79,7 +79,7 @@ function InstallPhp {
 			DownloadFile $RemoteUrl $Archive
 		}
 
-		Write-Debug "Unpack to ${InstallPath}"
+		Write-Debug "Unzip to ${InstallPath}"
 		Expand-Item7zip $Archive $InstallPath
 	}
 
@@ -112,7 +112,7 @@ function InstallPhpDevPack {
 
 		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
 		If (-not (Test-Path "$UnzipPath")) {
-			Write-Debug "Unpack to ${$Env:Temp}"
+			Write-Debug "Unzip to ${UnzipPath}"
 			Expand-Item7zip $Archive $Env:Temp
 		}
 
