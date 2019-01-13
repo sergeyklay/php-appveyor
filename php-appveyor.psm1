@@ -204,6 +204,39 @@ function TuneUpPhp {
 	}
 }
 
+function PrepareReleaseNote {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $NoteFile = 'RELEASE.txt',
+		[Parameter(Mandatory=$false)] [System.String] $NoteDirectory = ''
+	)
+
+	if ($NoteDirectory) {
+		$Destination = "${Env:APPVEYOR_BUILD_FOLDER}\${NoteDirectory}"
+	} else {
+		$Destination = "${Env:APPVEYOR_BUILD_FOLDER}"
+	}
+
+	if (-not (Test-Path $Destination)) {
+		New-Item -ItemType Directory -Force -Path "${Destination}" | Out-Null
+	}
+
+	$ReleaseFile = "${Destination}\${NoteFile}"
+	$ReleaseDate = Get-Date -Format g
+
+	$Image = $Env:APPVEYOR_BUILD_WORKER_IMAGE
+
+	Write-Output "Release date: ${ReleaseDate}"                   | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Release version: ${Env:APPVEYOR_BUILD_VERSION}" | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Git commit: ${Env:APPVEYOR_REPO_COMMIT}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build type: ${BuildType}"                       | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Platform: ${Platform}"                          | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Target PHP version: ${PhpVersion}"              | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build worker image: ${Image}"                   | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Used configuration: ${Env:CONFIGURATION}"       | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+}
 function SetupPhpVersionString {
 	param (
 		[Parameter(Mandatory=$true)] [String] $Pattern

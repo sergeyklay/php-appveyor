@@ -48,5 +48,14 @@ build_script:
   - ps: >-
       EnablePhpExtension -Name psr
 
+on_success:
+  - ps: >-
+      PrepareReleaseNote `
+        -PhpVersion    $Env:PHP_VERSION `
+        -BuildType     $Env:BUILD_TYPE `
+        -Platform      $Env:PLATFORM
+        -NoteDirectory package
+
 test_script:
-  - C:\php\php.exe -m
+  - ps: (& C:\php\php.exe -m)
+  - ps: Get-Content "${Env:APPVEYOR_BUILD_FOLDER}\package\RELEASE.txt"
