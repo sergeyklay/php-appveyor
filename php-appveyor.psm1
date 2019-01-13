@@ -48,7 +48,6 @@ function InstallPhpSdk {
 
 		$UnzipPath = "${Env:Temp}\php-sdk-binary-tools-${FileName}"
 		If (-not (Test-Path "${UnzipPath}")) {
-			Write-Debug "Unzip to ${UnzipPath}"
 			Expand-Item7zip -Archive $Archive -Destination $Env:Temp
 		}
 
@@ -82,7 +81,6 @@ function InstallPhp {
 			DownloadFile $RemoteUrl $Archive
 		}
 
-		Write-Debug "Unzip to ${InstallPath}"
 		Expand-Item7zip $Archive $InstallPath
 	}
 
@@ -115,7 +113,6 @@ function InstallPhpDevPack {
 
 		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
 		If (-not (Test-Path "$UnzipPath")) {
-			Write-Debug "Unzip to ${UnzipPath}"
 			Expand-Item7zip $Archive $Env:Temp
 		}
 
@@ -255,6 +252,8 @@ function Expand-Item7zip {
 	if (-not (Test-Path -Path $Archive -PathType Leaf)) {
 		throw "Specified archive file does not exist: ${Archive}"
 	}
+
+	Write-Debug "Unzipping ${Archive} to ${UnzipPath} ..."
 
 	if (-not (Test-Path -Path $Destination -PathType Container)) {
 		New-Item $Destination -ItemType Directory | Out-Null
