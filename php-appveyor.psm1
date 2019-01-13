@@ -279,8 +279,20 @@ function Ensure7ZipIsInstalled  {
 	}
 }
 
+function EnsureChocolateyIsInstalled {
+	if (-not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
+		$ChocolateyInstallationDirectory = "${Env:ChocolateyInstall}\bin"
+
+		if (-not (Test-Path "$ChocolateyInstallationDirectory")) {
+			throw "The choco is needed to use this module"
+		}
+
+		$Env:Path += ";$ChocolateyInstallationDirectory"
+	}
+}
+
 function EnsurePandocIsInstalled {
-	Get-ChildItem -Path "${Env:ChocolateyInstall}\bin"
+	Get-ChildItem -Path "${Env:ChocolateyInstall}"
 
 	if (-not (Get-Command "pandoc" -ErrorAction SilentlyContinue)) {
 		$PandocInstallationDirectory = "${Env:ChocolateyInstall}\bin"
