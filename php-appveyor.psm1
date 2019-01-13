@@ -19,6 +19,8 @@ Set-Variable `
 	-Option ReadOnly `
 	-Force
 
+# By default, debug messages are not displayed in the console,
+# but you can display them by using the Debug parameter or the $DebugPreference variable.
 $DebugPreference = "Continue"
 
 function InstallPhpSdk {
@@ -29,7 +31,7 @@ function InstallPhpSdk {
 		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php-sdk"
 	)
 
-	Write-Host "Install PHP SDK binary tools: ${Version}"
+	Write-Debug "Install PHP SDK binary tools: ${Version}"
 	SetupPrerequisites
 
 	$FileName  = "php-sdk-${Version}"
@@ -43,7 +45,7 @@ function InstallPhpSdk {
 
 		$UnzipPath = "${Env:Temp}\php-sdk-binary-tools-${FileName}"
 		If (-not (Test-Path "${UnzipPath}")) {
-			Write-Host "Unpack to ${UnzipPath}"
+			Write-Debug "Unpack to ${UnzipPath}"
 			Expand-Item7zip -Archive $Archive -Destination $Env:Temp
 		}
 
@@ -67,7 +69,7 @@ function InstallPhp {
 	SetupPrerequisites
 	$Version = SetupPhpVersionString -Pattern $Version
 
-	Write-Host "Install PHP: ${Version}"
+	Write-Debug "Install PHP v${Version}"
 
 	$RemoteUrl = "${__PHP_DOWNLOADS_BASE_URI__}/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
@@ -77,11 +79,44 @@ function InstallPhp {
 			DownloadFile $RemoteUrl $Archive
 		}
 
-		Expand-Item7zip -Archive $Archive -Destination $InstallPath
+		Write-Debug "Unpack to ${InstallPath}"
+		Expand-Item7zip $Archive $InstallPath
 	}
 
 	if (-not (Test-Path "${InstallPath}\php.ini")) {
 		Copy-Item "${InstallPath}\php.ini-development" "${InstallPath}\php.ini"
+	}
+}
+
+function InstallPhpDevPack {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $VC,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php-devpack"
+	)
+
+	SetupPrerequisites
+	$Version = SetupPhpVersionString -Pattern $PhpVersion
+
+	Write-Debug "Install PHP Dev for PHP v${Version}"
+
+	$RemoteUrl = "${PHP_URI}/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
+
+	if (-not (Test-Path $InstallPath)) {
+		if (-not [System.IO.File]::Exists($Archive)) {
+			DownloadFile $RemoteUrl $Archive
+		}
+
+		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
+		If (-not (Test-Path "$UnzipPath")) {
+			Write-Debug "Unpack to ${$Env:Temp}"
+			Expand-Item7zip $Archive $Env:Temp
+		}
+
+		Move-Item -Path $UnzipPath -Destination $InstallPath
 	}
 }
 
@@ -156,7 +191,7 @@ function DownloadFile {
 	$WebClient = New-Object System.Net.WebClient
 	$WebClient.Headers.Add('User-Agent', 'AppVeyor PowerShell Script')
 
-	Write-Host "Downloading: ${RemoteUrl} => ${Destination} ..."
+	Write-Debug "Downloading: ${RemoteUrl} => ${Destination} ..."
 
 	while (-not $Completed) {
 		try {

@@ -1,7 +1,7 @@
 = ``php-appveyor.psm1``
 :doctype: article
 :reproducible:
-:source-highlighter: rouge
+:source-highlighter: prettify
 
 Install PHP and its tooling on AppVeyor CI.
 
@@ -11,7 +11,7 @@ Install PHP and its tooling on AppVeyor CI.
 
 Add the following to your ``.appveyor.yml``:
 
-[source,powershell]
+[source,yml]
 ----
 environment:
   matrix:
