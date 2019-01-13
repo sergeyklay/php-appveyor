@@ -270,6 +270,7 @@ function PrepareReleasePackage {
 	if ($ReleaseFiles.count -gt 0) {
 		foreach ($File in $ReleaseFiles) {
 			Copy-Item "${File}" "${ReleaseDestination}"
+			Write-Debug "Copy ${File} to ${ReleaseDestination}"
 		}
 	}
 
