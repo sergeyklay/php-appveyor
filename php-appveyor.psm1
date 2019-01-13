@@ -235,7 +235,6 @@ function PrepareReleaseNote {
 	Write-Output "Platform: ${Platform}"                          | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 	Write-Output "Target PHP version: ${PhpVersion}"              | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 	Write-Output "Build worker image: ${Image}"                   | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Used configuration: ${Env:CONFIGURATION}"       | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 }
 function SetupPhpVersionString {
 	param (
