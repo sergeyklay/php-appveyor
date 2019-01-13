@@ -158,7 +158,8 @@ function EnablePhpExtension {
 	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 
 	if (Test-Path -Path "${PhpExe}") {
-		Write-Debug "Enabled modules: " + (& "${PhpExe}" -m)
+		$Modules = (& "${PhpExe}" -m)
+		Write-Debug "Enabled modules: ${Modules}"
 
 		$Result = (& "${PhpExe}" --ri "${Name}")
 		$ExitCode = $LASTEXITCODE
