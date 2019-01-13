@@ -136,7 +136,6 @@ function InstallPeclExtension {
 function EnablePhpExtension {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Name,
-		[Parameter(Mandatory=$false)] [System.String] $Prefix = 'php_',
 		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
 		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext',
 		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
@@ -169,6 +168,38 @@ function EnablePhpExtension {
 
 		if ($ExitCode -ne 0) {
 			throw "An error occurred while enabling ${Name} at ${IniFile}. ${Result}"
+		}
+	}
+}
+
+function TuneUpPhp {
+	param (
+		[Parameter(Mandatory=$false)] [System.String]   $MemoryLimit = '256M',
+		[Parameter(Mandatory=$false)] [System.String[]] $DefaultExtensions = @(),
+		[Parameter(Mandatory=$false)] [System.String]   $IniFile = 'C:\php\php.ini',
+		[Parameter(Mandatory=$false)] [System.String]   $ExtPath = 'C:\php\ext'
+	)
+
+	Write-Debug "Tune up PHP using file `"${IniFile}`""
+
+	if (-not [System.IO.File]::Exists($IniFile)) {
+		throw "Unable to locate ${IniFile} file"
+	}
+
+	if (-not (Test-Path $ExtPath)) {
+		throw "Unable to locate ${ExtPath} direcory"
+	}
+
+	Write-Output "" | Out-File -Encoding "ASCII" -Append $IniFile
+
+	Write-Output "extension_dir = ${ExtPath}"    | Out-File -Encoding "ASCII" -Append $IniFile
+	Write-Output "memory_limit = ${MemoryLimit}" | Out-File -Encoding "ASCII" -Append $IniFile
+
+	if ($DefaultExtensions.count -gt 0) {
+		Write-Output "" | Out-File -Encoding "ASCII" -Append $IniFile
+
+		foreach ($Ext in $DefaultExtensions) {
+			Write-Output "extension = php_${Ext}.dll" | Out-File -Encoding "ASCII" -Append $IniFile
 		}
 	}
 }

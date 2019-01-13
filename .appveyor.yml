@@ -33,6 +33,8 @@ install:
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
+  - ps: TuneUpPhp
+
   - ps: >-
       InstallPeclExtension `
         -Name       psr `
@@ -46,7 +48,6 @@ build_script:
   - ps: >-
       EnablePhpExtension `
         -Name    psr `
-        -Prefix  php_ `
         -PhpPath C:\php `
         -ExtPath C:\php\ext
 

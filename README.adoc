@@ -61,7 +61,6 @@ install:
   - ps: >-
       EnablePhpExtension `
         -Name          psr `
-        -Prefix        php_ `       # Optional
         -PhpPath       C:\php `     # Optional
         -ExtPath       C:\php\ext ` # Optional
         -PrintableName psr          # Optional
