@@ -130,6 +130,9 @@ function InstallPeclExtension {
 		}
 
 		Expand-Item7zip $DestinationPath "${InstallPath}"
+
+		$AllExts = Get-ChildItem -Path $DestinationPath
+		Write-Debug "Extension directory contents: ${AllExts}"
 	}
 }
 
@@ -151,7 +154,7 @@ function EnablePhpExtension {
 	}
 
 	if (-not (Test-Path "${ExtPath}")) {
-		throw "Unable to locate extension path: ${ExtPath}"
+		throw "Unable to locate ${ExtPath} direcory"
 	}
 
 	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
