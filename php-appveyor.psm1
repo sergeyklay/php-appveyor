@@ -267,8 +267,6 @@ function PrepareReleasePackage {
 		foreach ($File in $ReleaseFiles) {
 			Copy-Item "${File}" "${ReleaseDestination}"
 		}
-
-		Copy-Item "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}\${ReleaseFile}" "${ReleaseDestination}"
 	}
 
 	if (!$ZipballName) {
@@ -285,7 +283,9 @@ function PrepareReleasePackage {
 	Get-ChildItem -Path "${ReleaseDestination}"
 	$Output = (& 7z a "${ZipballName}.zip" *.*)
 	$ExitCode = $LASTEXITCODE
-	Get-ChildItem -Path "${ReleaseDestination}"
+
+	$DirectoryContents = Get-ChildItem -Path "${ReleaseDestination}"
+	Write-Debug ($DirectoryContents | Out-String)
 
 	If ($ExitCode -ne 0) {
 		Set-Location "${CurrentPath}"
