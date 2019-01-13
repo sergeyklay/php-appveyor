@@ -1,10 +1,13 @@
-# ``php-appveyor.psm1``
+= ``php-appveyor.psm1``
+:doctype: article
+:reproducible:
+:source-highlighter: rouge
 
 Install PHP and its tooling on AppVeyor CI.
 
 ``php-appveyor.psm1`` is a small PowerShell script which provides functions to install stable PHP versions, PHP DevPack, PHP SDK binary tools and doing some usual provision tasks on the AppVeyor CI.
 
-## Usage
+== Usage
 
 Add the following to your ``.appveyor.yml``:
 
@@ -35,7 +38,7 @@ install:
   - ps: InstallPhp    $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 ----
 
-## License
+== License
 
 ``php-appveyor.psm1`` is open source software licensed under the MIT License (MIT).
 See the https://github.com/sergeyklay/php-appveyor/blob/master/LICENSE[LICENSE] file for more information.
