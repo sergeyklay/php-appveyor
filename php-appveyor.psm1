@@ -285,7 +285,7 @@ function PrepareReleasePackage {
 	Ensure7ZipIsInstalled
 
 	Set-Location "${ReleaseDestination}"
-	$Output = (& 7z a "${ZipballName}.zip" *.*)
+	$Output = (& 7z a "${ZipballName}.zip" *)
 	$ExitCode = $LASTEXITCODE
 
 	$DirectoryContents = Get-ChildItem -Path "${ReleaseDestination}"
