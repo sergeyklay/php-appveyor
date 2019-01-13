@@ -150,8 +150,8 @@ function EnablePhpExtension {
 		throw "Unable to locate ${IniFile}"
 	}
 
-	if (-not (Test-Path "${FullyQualifiedExtensionPath}")) {
-		throw "Unable to locate extension path: ${FullyQualifiedExtensionPath}"
+	if (-not (Test-Path "${ExtPath}")) {
+		throw "Unable to locate extension path: ${ExtPath}"
 	}
 
 	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
