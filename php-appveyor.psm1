@@ -129,9 +129,9 @@ function InstallPeclExtension {
 			DownloadFile $RemoteUrl $DestinationPath
 		}
 
-		Expand-Item7zip $DestinationPath "${InstallPath}"
+		Expand-Item7zip $DestinationPath $InstallPath
 
-		$AllExts = Get-ChildItem -Path $DestinationPath
+		$AllExts = Get-ChildItem -Path $InstallPath
 		Write-Debug "Extension directory contents: ${AllExts}"
 	}
 }
