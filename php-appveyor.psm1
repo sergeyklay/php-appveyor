@@ -138,7 +138,8 @@ function EnablePhpExtension {
 		[Parameter(Mandatory=$true)]  [System.String] $Name,
 		[Parameter(Mandatory=$false)] [System.String] $Prefix = 'php_',
 		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
-		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext'
+		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext',
+		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
 	)
 
 	$FullyQualifiedExtensionPath = "${ExtPath}\${Prefix}${Name}.dll"
@@ -158,10 +159,12 @@ function EnablePhpExtension {
 	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 
 	if (Test-Path -Path "${PhpExe}") {
-		$Modules = (& "${PhpExe}" -m)
-		Write-Debug "Enabled modules: ${Modules}"
+		if ($PrintableName) {
+			$Result = (& "${PhpExe}" --ri "${PrintableName}")
+		} else {
+			$Result = (& "${PhpExe}" --ri "${Name}")
+		}
 
-		$Result = (& "${PhpExe}" --ri "${Name}")
 		$ExitCode = $LASTEXITCODE
 
 		if ($ExitCode -ne 0) {
