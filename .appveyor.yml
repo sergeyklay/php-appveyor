@@ -60,4 +60,4 @@ on_success:
         -NoteDirectory package
   - ps: Get-Content "${Env:APPVEYOR_BUILD_FOLDER}\package\RELEASE.txt"
   - ps: Write-Host ($Env:Path).Replace(';', "`n")
-  - ps: Get-ChildItem Env:
+  - ps: 'Get-ChildItem Env:'
