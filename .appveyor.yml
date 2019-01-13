@@ -45,8 +45,7 @@ install:
         -Platform   $Env:PLATFORM
 
 build_script:
-  - ps: >-
-      EnablePhpExtension -Name psr
+  - ps: EnablePhpExtension -Name psr
   - ps: EnsureChocolateyIsInstalled
   - ps: EnsurePandocIsInstalled
 
@@ -54,10 +53,11 @@ test_script:
   - ps: (& C:\php\php.exe -m)
 
 on_success:
+  - ps: InstallBuildDependencies
   - ps: >-
-      PrepareReleaseNote `
+      PrepareReleasePackage `
         -PhpVersion    $Env:PHP_VERSION `
         -BuildType     $Env:BUILD_TYPE `
         -Platform      $Env:PLATFORM `
-        -NoteDirectory package
-  - ps: Get-Content "${Env:APPVEYOR_BUILD_FOLDER}\package\RELEASE.txt"
+        -ZipballName   demo.zip `
+        -ReleaseFiles  LICENSE,README.adoc

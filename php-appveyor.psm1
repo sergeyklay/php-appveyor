@@ -209,21 +209,17 @@ function PrepareReleaseNote {
 		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
 		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
 		[Parameter(Mandatory=$true)]  [System.String] $Platform,
-		[Parameter(Mandatory=$false)] [System.String] $NoteFile = 'RELEASE.txt',
-		[Parameter(Mandatory=$false)] [System.String] $NoteDirectory = ''
+		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile,
+		[Parameter(Mandatory=$false)] [System.String] $ReleaseDirectory
 	)
 
-	if ($NoteDirectory) {
-		$Destination = "${Env:APPVEYOR_BUILD_FOLDER}\${NoteDirectory}"
-	} else {
-		$Destination = "${Env:APPVEYOR_BUILD_FOLDER}"
-	}
+	$Destination = "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}"
 
 	if (-not (Test-Path $Destination)) {
 		New-Item -ItemType Directory -Force -Path "${Destination}" | Out-Null
 	}
 
-	$ReleaseFile = "${Destination}\${NoteFile}"
+	$ReleaseFile = "${Destination}\${ReleaseFile}"
 	$ReleaseDate = Get-Date -Format g
 
 	$Image = $Env:APPVEYOR_BUILD_WORKER_IMAGE
@@ -239,6 +235,63 @@ function PrepareReleaseNote {
 	Write-Output "Target PHP version: ${PhpVersion}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 	Write-Output "Build worker image: ${Image}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 }
+
+function PrepareReleasePackage {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $ZipballName = '',
+		[Parameter(Mandatory=$false)] [System.String[]] $ReleaseFiles = @(),
+		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile = 'RELEASE.txt'
+	)
+
+	$ReleaseDirectory = "${Env:APPVEYOR_PROJECT_NAME}-${Env:APPVEYOR_BUILD_ID}-${Env:APPVEYOR_JOB_ID}-${Env:APPVEYOR_JOB_NUMBER}"
+
+	PrepareReleaseNote `
+		-PhpVersion       $PhpVersion `
+		-BuildType        $BuildType `
+		-Platform         $Platform `
+		-ReleaseFile      $ReleaseFile `
+		-ReleaseDirectory $ReleaseDirectory
+
+	$ReleaseDestination = "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}"
+
+	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
+
+	# FormatReleaseFiles
+
+	if ($ReleaseFiles.count -gt 0) {
+		foreach ($File in $ReleaseFiles) {
+			Copy-Item "${File}" "${ReleaseDestination}"
+		}
+	}
+
+	if (!$Env:RELEASE_ZIPBALL) {
+		$ZipballName = $Env:RELEASE_ZIPBALL;
+	}
+
+	if (!$ZipballName) {
+		throw 'A releaze zipball name is mandatory parameter'
+	}
+
+	Ensure7ZipIsInstalled
+
+	Get-ChildItem -Path "${ReleaseDestination}"
+	Set-Location "${ReleaseDestination}"
+	$Output = (& 7z a "${ZipballName}.zip" *.*)
+	$ExitCode = $LASTEXITCODE
+	Get-ChildItem -Path "${ReleaseDestination}"
+
+	If ($ExitCode -ne 0) {
+		Set-Location "${CurrentPath}"
+		throw "An error occurred while creating release zippbal: `"${ZipballName}`". ${Output}"
+	}
+
+	Move-Item "${ZipballName}.zip" -Destination "${Env:APPVEYOR_BUILD_FOLDER}"
+	Set-Location "${CurrentPath}"
+}
+
 function SetupPhpVersionString {
 	param (
 		[Parameter(Mandatory=$true)] [String] $Pattern
@@ -279,6 +332,11 @@ function Ensure7ZipIsInstalled  {
 	}
 }
 
+function InstallBuildDependencies {
+	EnsureChocolateyIsInstalled
+	$Output = (choco install -y --no-progress pandoc)
+}
+
 function EnsureChocolateyIsInstalled {
 	if (-not (Get-Command "choco" -ErrorAction SilentlyContinue)) {
 		$ChocolateyInstallationDirectory = "${Env:ChocolateyInstall}\bin"
@@ -292,8 +350,6 @@ function EnsureChocolateyIsInstalled {
 }
 
 function EnsurePandocIsInstalled {
-	Get-ChildItem -Path "${Env:ChocolateyInstall}"
-
 	if (-not (Get-Command "pandoc" -ErrorAction SilentlyContinue)) {
 		$PandocInstallationDirectory = "${Env:ChocolateyInstall}\bin"
 
