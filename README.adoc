@@ -14,20 +14,27 @@ Add the following to your ``.appveyor.yml``:
 [source,yml]
 ----
 environment:
+  # Use this matrix item as an example
   matrix:
 
-    - PHP_VERSION: 7.3 # <1>
+    # Specify buld matrix for your app
+    - PHP_VERSION: 7.3
       VC_VERSION: 15
       BUILD_TYPE: nts-Win32
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
-  PHP_SDK_VERSION: 2.1.9 # <2>
+  # Specify required PHP SDK binary tools if you need SDK
+  PHP_SDK_VERSION: 2.1.9 # 2
 
 cache:
-  - 'C:\Downloads -> .appveyor.yml' # <3>
+  # The C:\Downloads directory will be used as a storage for downloaded archives.
+  # So you may want to cache it.
+  - 'C:\Downloads -> .appveyor.yml' # 3
 
+# Specify required architecture.
+# Supported architectures are ``x86`` and ``x64``
 platform:
-  - x64 # <4>
+  - x64 # 4
 
 install:
   - ps: Import-Module .\php-appveyor.psm1
@@ -35,10 +42,6 @@ install:
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 ----
-<1> Specify buld matrix for your app. Use this matrix item as an example
-<2> Specify required PHP SDK binary tools if you need SDK
-<3> The ``C:\Downloads`` directory will be used as a storage for downloaded archives. So you may want to cache it
-<4> Specify required architecture. Supported architectures are ``x86`` and ``x64``
 
 == License
 
