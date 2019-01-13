@@ -222,20 +222,21 @@ function PrepareReleaseNote {
 	}
 
 	$ReleaseFile = "${Destination}\${ReleaseFile}"
-	$ReleaseDate = Get-Date -Format g
+	$ReleaseDate = Get-Date -Format o
 
 	$Image = $Env:APPVEYOR_BUILD_WORKER_IMAGE
 	$Version = $Env:APPVEYOR_BUILD_VERSION
 	$Commit = $Env:APPVEYOR_REPO_COMMIT
 	$CommitDate = $Env:APPVEYOR_REPO_COMMIT_TIMESTAMP
 
-	Write-Output "Release date: ${ReleaseDate}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Release version: ${Version}"              | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Git commit: ${Commit} (at ${CommitDate})" | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Build type: ${BuildType}"                 | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Platform: ${Platform}"                    | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Target PHP version: ${PhpVersion}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
-	Write-Output "Build worker image: ${Image}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Release date: ${ReleaseDate}"      | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Release version: ${Version}"       | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Git commit: ${Commit}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Commit date: ${CommitDate}"        | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build type: ${BuildType}"          | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Platform: ${Platform}"             | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Target PHP version: ${PhpVersion}" | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
+	Write-Output "Build worker image: ${Image}"      | Out-File -Encoding "ASCII" -Append "${ReleaseFile}"
 }
 
 function PrepareReleasePackage {
