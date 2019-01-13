@@ -154,6 +154,39 @@ function InstallPeclExtension {
 	}
 }
 
+function EnablePhpExtension {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Name,
+		[Parameter(Mandatory=$false)] [System.String] $Prefix = 'php_',
+		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext'
+	)
+
+	$FullyQualifiedExtensionPath = "${ExtPath}\${Prefix}${Name}.dll"
+
+	$IniFile = "${PhpPath}\php.ini"
+	$PhpExe  = "${PhpPath}\php.exe"
+
+	if (-not [System.IO.File]::Exists($IniFile)) {
+		throw "Unable to locate ${IniFile}"
+	}
+
+	if (-not (Test-Path "${FullyQualifiedExtensionPath}")) {
+		throw "Unable to locate extension path: ${FullyQualifiedExtensionPath}"
+	}
+
+	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
+
+	if (Test-Path -Path "${PhpExe}") {
+		$Result = (& "${PhpExe}" --ri "${Name}")
+		$ExitCode = $LASTEXITCODE
+
+		if ($ExitCode -ne 0) {
+			throw "An error occurred while enabling ${Name} at ${IniFile}. Result was ${Result}."
+		}
+	}
+}
+
 function SetupPhpVersionString {
 	param (
 		[Parameter(Mandatory=$true)] [String] $Pattern

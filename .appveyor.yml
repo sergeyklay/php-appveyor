@@ -43,7 +43,13 @@ install:
         -Platform   $Env:PLATFORM
 
 build_script:
-  - DIR C:\php\ext
+  - ps: >-
+      EnablePhpExtension `
+        -Name    psr `
+        -Prefix  php_ `
+        -PhpPath C:\php `
+        -ExtPath C:\php\ext
 
 test_script:
   - C:\php\php.exe -v
+  - C:\php\php.exe -m
