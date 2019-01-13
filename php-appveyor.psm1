@@ -19,9 +19,12 @@ Set-Variable `
 	-Option ReadOnly `
 	-Force
 
-# By default, debug messages are not displayed in the console,
-# but you can display them by using the Debug parameter or the $DebugPreference variable.
-# $DebugPreference = "Continue"
+Set-Variable `
+	-name _PECL_DOWNLOADS_BASE_URI_ `
+	-value "https://windows.php.net/downloads/pecl/releases" `
+	-Scope Global `
+	-Option ReadOnly `
+	-Force
 
 function InstallPhpSdk {
 	param (
@@ -117,6 +120,40 @@ function InstallPhpDevPack {
 		}
 
 		Move-Item -Path $UnzipPath -Destination $InstallPath
+	}
+}
+
+function InstallPeclExtension {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Name,
+		[Parameter(Mandatory=$true)]  [System.String] $Version,
+		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $VC,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php\ext"
+	)
+
+	SetupPrerequisites
+
+	$BaseUri = "${_PECL_DOWNLOADS_BASE_URI_}/${Name}/${Version}"
+	$LocalPart = "php_${Name}-${Version}-${PhpVersion}"
+
+	If ($BuildType -Match "nts-Win32") {
+		$TS = "nts"
+	} Else {
+		$TS = "ts"
+	}
+
+	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
+	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
+
+	If (-not (Test-Path "${InstallPath}\php_${Name}.dll")) {
+		If (-not [System.IO.File]::Exists($DestinationPath)) {
+			DownloadFile $RemoteUrl $DestinationPath
+		}
+
+		Expand-Item7zip $DestinationPath "${Env:PHP_PATH}\ext"
 	}
 }
 

@@ -9,6 +9,7 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
   PHP_SDK_VERSION: 2.1.9
+  PECL_PSR_VERSION: 0.6.1
 
 matrix:
   fast_finish: true
@@ -22,16 +23,26 @@ clone_folder: C:\Projects\php-appveyor
 platform:
   - x64
 
-install:
+init:
   - ps: Import-Module .\php-appveyor.psm1
-  - ps: $DebugPreference = "SilentlyContinue"
+  - ps: $DebugPreference = "Continue" # SilentlyContinue
+
+install:
   - ps: InstallPhpSdk     $Env:PHP_SDK_VERSION $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
-# init:
+  - ps: >-
+      InstallPeclExtension `
+        -Name       psr `
+        -Version    $Env:PECL_PSR_VERSION `
+        -PhpVersion $Env:PHP_VERSION `
+        -BuildType  $Env:BUILD_TYPE `
+        -VC         $Env:VC_VERSION `
+        -Platform   $Env:PLATFORM
+
 build_script:
-  - DIR C:\php
+  - DIR C:\php\ext
 
 test_script:
   - C:\php\php.exe -v
