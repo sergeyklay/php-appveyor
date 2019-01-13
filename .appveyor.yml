@@ -35,6 +35,7 @@ install:
 
   - ps: TuneUpPhp
 
+before_build:
   - ps: >-
       InstallPeclExtension `
         -Name       psr `
@@ -50,7 +51,7 @@ build_script:
 test_script:
   - ps: (& C:\php\php.exe --ri psr)
 
-on_success:
+after_test:
   - ps: >-
       PrepareReleasePackage `
         -PhpVersion     $Env:PHP_VERSION `
