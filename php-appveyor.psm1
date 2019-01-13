@@ -303,7 +303,7 @@ function Expand-Item7zip {
 		throw "Specified archive file does not exist: ${Archive}"
 	}
 
-	Write-Debug "Unzipping ${Archive} to ${UnzipPath} ..."
+	Write-Debug "Unzipping ${Archive} to ${Destination} ..."
 
 	if (-not (Test-Path -Path $Destination -PathType Container)) {
 		New-Item $Destination -ItemType Directory | Out-Null
