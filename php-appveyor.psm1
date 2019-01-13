@@ -267,7 +267,7 @@ function PrepareReleasePackage {
 		}
 	}
 
-	if (!$Env:RELEASE_ZIPBALL) {
+	if ($Env:RELEASE_ZIPBALL) {
 		$ZipballName = $Env:RELEASE_ZIPBALL;
 	}
 
@@ -428,7 +428,7 @@ function Expand-Item7zip {
 		New-Item $Destination -ItemType Directory | Out-Null
 	}
 
-	& 7z x "$Archive" "-o$Destination" -aoa -bd -y -r
+	$Output = (& 7z x "$Archive" "-o$Destination" -aoa -bd -y -r)
 	$ExitCode = $LASTEXITCODE
 
 	If ($ExitCode -ne 0) {
