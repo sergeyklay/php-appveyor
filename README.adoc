@@ -1,4 +1,5 @@
 = ``php-appveyor.psm1``
+Serghei Iakovlev <https://github.com/sergeyklay[@sergeyklay]>;
 :doctype: article
 :reproducible:
 :source-highlighter: prettify
@@ -68,6 +69,8 @@ install:
 build_script:
   # Your code here
 ----
+
+For more completely example see ``.appveyor.yml`` of this project.
 
 == License
 
