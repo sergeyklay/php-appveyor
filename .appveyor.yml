@@ -74,12 +74,12 @@ before_build:
   - ps: EnablePhpExtension -Name zephir_parser -PrintableName "Zephir Parser"
 
 build_script:
-  - ps: (& C:\php\php.exe --ri psr)
-  - ps: (& C:\php\php.exe --ri "Zephir Parser")
+  - C:\php\php.exe --ri psr
+  - C:\php\php.exe --ri "Zephir Parser"
 
 test_script:
-  - cmd: 'composer --version'
-  - cmd: 'zephir --version'
+  - ps: .\composer --version
+  - ps: .\zephir --version
 
 after_test:
   - ps: >-
