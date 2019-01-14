@@ -37,7 +37,7 @@ branches:
     - development
 
 init:
-  - ps: $DebugPreference = "SilentlyContinue" # Continue
+  - ps: $DebugPreference = "Continue" # SilentlyContinue
 
 install:
   - ps: Import-Module .\php-appveyor.psm1

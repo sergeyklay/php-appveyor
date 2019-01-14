@@ -207,8 +207,10 @@ function EnablePhpExtension {
 
 	if (Test-Path -Path "${PhpExe}") {
 		if ($PrintableName) {
+			Write-Debug "Execute command `"${PhpExe} --ri ${PrintableName}`""
 			$Result = (& "${PhpExe}" --ri "${PrintableName}")
 		} else {
+			Write-Debug "Execute command `"${PhpExe} --ri ${PrintableName}`""
 			$Result = (& "${PhpExe}" --ri "${Name}")
 		}
 

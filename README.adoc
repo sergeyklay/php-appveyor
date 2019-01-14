@@ -1,4 +1,5 @@
 = ``php-appveyor.psm1``
+Serghei Iakovlev <https://github.com/sergeyklay[@sergeyklay]>;
 :doctype: article
 :reproducible:
 :source-highlighter: prettify
