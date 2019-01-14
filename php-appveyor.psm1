@@ -22,7 +22,7 @@ function InstallPhpSdk {
 	$RemoteUrl = "https://github.com/Microsoft/php-sdk-binary-tools/archive/${FileName}.zip"
 	$Archive   = "C:\Downloads\${FileName}.zip"
 
-	if (-not (Test-Path $InstallPath)) {
+	if (-not (Test-Path "${InstallPath}\bin\php\php.exe")) {
 		if (-not (Test-Path $Archive)) {
 			DownloadFile -RemoteUrl $RemoteUrl -Destination $Archive
 		}
@@ -57,7 +57,7 @@ function InstallPhp {
 	$RemoteUrl = "http://windows.php.net/downloads/releases/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
-	if (-not (Test-Path $InstallPath)) {
+	if (-not (Test-Path "${InstallPath}\php.exe")) {
 		if (-not (Test-Path $Archive)) {
 			DownloadFile $RemoteUrl $Archive
 		}
@@ -87,7 +87,7 @@ function InstallPhpDevPack {
 	$RemoteUrl = "http://windows.php.net/downloads/releases/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
 	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
-	if (-not (Test-Path $InstallPath)) {
+	if (-not (Test-Path "${InstallPath}\phpize.bat")) {
 		if (-not (Test-Path $Archive)) {
 			DownloadFile $RemoteUrl $Archive
 		}
