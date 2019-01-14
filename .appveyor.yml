@@ -76,7 +76,7 @@ build_script:
   - ps: (& C:\php\php.exe --ri "Zephir Parser")
 
 test_script:
-  - cmd: 'composer --help'
+  - cmd: 'composer --version'
 
 after_test:
   - ps: >-

@@ -189,7 +189,7 @@ function InstallComposer {
 
 	$ComposerBatch = "${Env:APPVEYOR_BUILD_FOLDER}\composer.bat"
 
-	If (-not (Test-Path -Path $ComposerBatch)) {
+	if (-not (Test-Path -Path $ComposerBatch)) {
 		$ComposerPhar = "${Env:APPVEYOR_BUILD_FOLDER}\composer.phar"
 
 		DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
