@@ -208,17 +208,17 @@ function InstallZephir {
 	)
 
 	$InstallPath = ResolvePath -Path $InstallPath
+
+	$ZephirPhar  = "${InstallPath}\zephir.phar"
 	$ZephirBatch = "${InstallPath}\zephir.bat"
 
-	if (-not (Test-Path -Path $ZephirBatch)) {
-		$ZephirPhar = "${InstallPath}\zephir.phar"
-
+	if (-not (Test-Path -Path $ZephirPhar)) {
 		$BaseUri = "https://github.com/phalcon/zephir/releases/download"
 		$RemoteUrl = "${BaseUri}/${Version}/zephir.phar"
 
 		DownloadFile "${RemoteUrl}" "${ZephirPhar}"
 
-		Write-Output '@echo off' | Out-File -Encoding "ASCII" -Append $ZephirBatch
+		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ZephirBatch
 		Write-Output "${PhpPath}\php.exe `"${ZephirPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ZephirBatch
 	}
 }
