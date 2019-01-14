@@ -47,7 +47,7 @@ install:
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
-  - ps: TuneUpPhp
+  - ps: TuneUpPhp -DefaultExtensions fileinfo
   - ps: InstallComposer
   - ps: InstallZephir -Version $Env:ZEPHIR_VERSION
 
