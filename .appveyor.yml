@@ -15,6 +15,8 @@ environment:
 
   PHP_SDK_VERSION: 2.1.9
   PECL_PSR_VERSION: 0.6.1
+  ZEPHIR_PARSER_VERSION: 1.2.0
+  ZEPHIR_PARSER_RELEASE: 454
 
 matrix:
   fast_finish: true
@@ -56,11 +58,22 @@ before_build:
         -VC         $Env:VC_VERSION `
         -Platform   $Env:PLATFORM
 
+  - ps: >-
+      InstallZephirParser `
+        -Version    $Env:ZEPHIR_PARSER_VERSION `
+        -BuildId    $Env:ZEPHIR_PARSER_RELEASE `
+        -PhpVersion $Env:PHP_VERSION `
+        -BuildType  $Env:BUILD_TYPE `
+        -VC         $Env:VC_VERSION `
+        -Platform   $Env:PLATFORM
+
 build_script:
   - ps: EnablePhpExtension -Name psr
+  - ps: EnablePhpExtension -Name zephir_parser -PrintableName "Zephir Parser"
 
 test_script:
   - ps: (& C:\php\php.exe --ri psr)
+  - ps: (& C:\php\php.exe --ri "Zephir Parser")
 
 after_test:
   - ps: >-

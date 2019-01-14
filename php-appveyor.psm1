@@ -109,7 +109,8 @@ function InstallPeclExtension {
 		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
 		[Parameter(Mandatory=$true)]  [System.String] $VC,
 		[Parameter(Mandatory=$true)]  [System.String] $Platform,
-		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php\ext"
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php\ext",
+		[Parameter(Mandatory=$false)] [System.Boolean] $Enable = $false
 	)
 
 	SetupPrerequisites
@@ -132,6 +133,51 @@ function InstallPeclExtension {
 		}
 
 		Expand-Item7zip $DestinationPath $InstallPath
+	}
+
+	if ($Enable) {
+		EnablePhpExtension -Name psr
+	}
+}
+
+function InstallZephirParser {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Version,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildId,
+		[Parameter(Mandatory=$true)]  [System.String] $PhpVersion,
+		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
+		[Parameter(Mandatory=$true)]  [System.String] $VC,
+		[Parameter(Mandatory=$true)]  [System.String] $Platform,
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = "C:\php\ext",
+		[Parameter(Mandatory=$false)] [System.Boolean] $Enable = $false
+	)
+
+	SetupPrerequisites
+
+	$BaseUri = "https://github.com/phalcon/php-zephir-parser/releases/download/v${Version}"
+	$LocalPart = "zephir_parser_${Platform}_vc${VC}_php${PhpVersion}"
+
+	If ($BuildType -Match "nts-Win32") {
+		$TS = "-nts"
+	} Else {
+		$TS = ""
+	}
+
+	$RemoteUrl = "${BaseUri}/${LocalPart}${TS}_${Version}-${BuildId}.zip"
+	$DestinationPath = "C:\Downloads\${LocalPart}${TS}_${Version}-${BuildId}.zip"
+
+	If (-not (Test-Path "${InstallPath}\php_zephir_parser.dll")) {
+		If (-not [System.IO.File]::Exists($DestinationPath)) {
+			DownloadFile $RemoteUrl $DestinationPath
+		}
+
+		Expand-Item7zip $DestinationPath "${Env:PHP_PATH}\ext"
+	}
+
+	if ($Enable) {
+		EnablePhpExtension `
+			-Name zephir_parser `
+			-PrintableName "Zephir Parser"
 	}
 }
 

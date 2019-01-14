@@ -69,6 +69,8 @@ build_script:
   # Your code here
 ----
 
+For more completely example see ``.appveyor.yml`` of this project.
+
 == License
 
 ``php-appveyor.psm1`` is open source software licensed under the MIT License (MIT).
