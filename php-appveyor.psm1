@@ -23,12 +23,12 @@ function InstallPhpSdk {
 	$Archive   = "C:\Downloads\${FileName}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
-		if (-not [System.IO.File]::Exists($Archive)) {
+		if (-not (Test-Path $Archive)) {
 			DownloadFile -RemoteUrl $RemoteUrl -Destination $Archive
 		}
 
 		$UnzipPath = "${Env:Temp}\php-sdk-binary-tools-${FileName}"
-		If (-not (Test-Path "${UnzipPath}")) {
+		if (-not (Test-Path "${UnzipPath}")) {
 			Expand-Item7zip -Archive $Archive -Destination $Env:Temp
 		}
 
@@ -58,7 +58,7 @@ function InstallPhp {
 	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
-		if (-not [System.IO.File]::Exists($Archive)) {
+		if (-not (Test-Path $Archive)) {
 			DownloadFile $RemoteUrl $Archive
 		}
 
@@ -88,12 +88,12 @@ function InstallPhpDevPack {
 	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path $InstallPath)) {
-		if (-not [System.IO.File]::Exists($Archive)) {
+		if (-not (Test-Path $Archive)) {
 			DownloadFile $RemoteUrl $Archive
 		}
 
 		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
-		If (-not (Test-Path "$UnzipPath")) {
+		if (-not (Test-Path "$UnzipPath")) {
 			Expand-Item7zip $Archive $Env:Temp
 		}
 
@@ -118,17 +118,17 @@ function InstallPeclExtension {
 	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${Version}"
 	$LocalPart = "php_${Name}-${Version}-${PhpVersion}"
 
-	If ($BuildType -Match "nts-Win32") {
+	if ($BuildType -Match "nts-Win32") {
 		$TS = "nts"
-	} Else {
+	} else {
 		$TS = "ts"
 	}
 
 	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
 	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
 
-	If (-not (Test-Path "${InstallPath}\php_${Name}.dll")) {
-		If (-not [System.IO.File]::Exists($DestinationPath)) {
+	if (-not (Test-Path "${InstallPath}\php_${Name}.dll")) {
+		if (-not (Test-Path $DestinationPath)) {
 			DownloadFile $RemoteUrl $DestinationPath
 		}
 
@@ -157,17 +157,17 @@ function InstallZephirParser {
 	$BaseUri = "https://github.com/phalcon/php-zephir-parser/releases/download/v${Version}"
 	$LocalPart = "zephir_parser_${Platform}_vc${VC}_php${PhpVersion}"
 
-	If ($BuildType -Match "nts-Win32") {
+	if ($BuildType -Match "nts-Win32") {
 		$TS = "-nts"
-	} Else {
+	} else {
 		$TS = ""
 	}
 
 	$RemoteUrl = "${BaseUri}/${LocalPart}${TS}_${Version}-${BuildId}.zip"
 	$DestinationPath = "C:\Downloads\${LocalPart}${TS}_${Version}-${BuildId}.zip"
 
-	If (-not (Test-Path "${InstallPath}\php_zephir_parser.dll")) {
-		If (-not [System.IO.File]::Exists($DestinationPath)) {
+	if (-not (Test-Path "${InstallPath}\php_zephir_parser.dll")) {
+		if (-not (Test-Path $DestinationPath)) {
 			DownloadFile $RemoteUrl $DestinationPath
 		}
 
@@ -206,7 +206,7 @@ function InstallZephir {
 
 	$ZephirBatch = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.bat"
 
-	If (-not (Test-Path -Path $ZephirBatch)) {
+	if (-not (Test-Path -Path $ZephirBatch)) {
 		$ZephirPhar = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.phar"
 
 		$BaseUri = "https://github.com/phalcon/zephir/releases/download"
@@ -232,7 +232,7 @@ function EnablePhpExtension {
 	$IniFile = "${PhpPath}\php.ini"
 	$PhpExe  = "${PhpPath}\php.exe"
 
-	if (-not [System.IO.File]::Exists($IniFile)) {
+	if (-not (Test-Path $IniFile)) {
 		throw "Unable to locate ${IniFile}"
 	}
 
@@ -269,7 +269,7 @@ function TuneUpPhp {
 
 	Write-Debug "Tune up PHP using file `"${IniFile}`""
 
-	if (-not [System.IO.File]::Exists($IniFile)) {
+	if (-not (Test-Path $IniFile)) {
 		throw "Unable to locate ${IniFile} file"
 	}
 
@@ -414,7 +414,7 @@ function SetupPhpVersionString {
 	$RemoteUrl   = 'http://windows.php.net/downloads/releases/sha256sum.txt'
 	$Destination = "${Env:Temp}\php-sha256sum.txt"
 
-	If (-not [System.IO.File]::Exists($Destination)) {
+	if (-not (Test-Path $Destination)) {
 		DownloadFile $RemoteUrl $Destination
 	}
 
@@ -477,7 +477,7 @@ function EnsurePandocIsInstalled {
 	$Output = (& "pandoc" -v)
 	$ExitCode = $LASTEXITCODE
 
-	If ($ExitCode -ne 0) {
+	if ($ExitCode -ne 0) {
 		throw "An error occurred while self testing pandoc. ${Output}"
 	}
 }
@@ -550,7 +550,7 @@ function Expand-Item7zip {
 	$Output = (& 7z x "$Archive" "-o$Destination" -aoa -bd -y -r)
 	$ExitCode = $LASTEXITCODE
 
-	If ($ExitCode -ne 0) {
-		throw "An error occurred while unzipping '${Archive}' to '${Destination}'"
+	if ($ExitCode -ne 0) {
+		throw "An error occurred while unzipping '${Archive}' to '${Destination}'. ${Output}"
 	}
 }
