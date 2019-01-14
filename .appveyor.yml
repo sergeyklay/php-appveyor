@@ -95,3 +95,7 @@ artifacts:
   - path: '.\php-appveyor.zip'
     type: zip
     name: php-appveyor
+
+on_success:
+  - ps: Get-Host
+  - ps: $PSVersionTable
