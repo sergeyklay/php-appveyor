@@ -183,7 +183,6 @@ function InstallZephirParser {
 
 function InstallComposer {
 	param (
-		[Parameter(Mandatory=$false)] [System.String] $BatchFile = 'composer.bat',
 		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php'
 	)
 
@@ -196,6 +195,27 @@ function InstallComposer {
 
 		Write-Output '@echo off' | Out-File -Encoding "ASCII" -Append $ComposerBatch
 		Write-Output "${PhpPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
+	}
+}
+
+function InstallZephir {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Version,
+		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php'
+	)
+
+	$ZephirBatch = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.bat"
+
+	If (-not (Test-Path -Path $ZephirBatch)) {
+		$ZephirPhar = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.phar"
+
+		$BaseUri = "https://github.com/phalcon/zephir/releases/download"
+		$RemoteUrl = "${BaseUri}/${Version}/zephir.phar"
+
+		DownloadFile "${RemoteUrl}" "${ZephirPhar}"
+
+		Write-Output '@echo off' | Out-File -Encoding "ASCII" -Append $ZephirBatch
+		Write-Output "${PhpPath}\php.exe `"${ZephirPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ZephirBatch
 	}
 }
 

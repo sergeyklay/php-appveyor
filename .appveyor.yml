@@ -17,6 +17,7 @@ environment:
   PECL_PSR_VERSION: 0.6.1
   ZEPHIR_PARSER_VERSION: 1.2.0
   ZEPHIR_PARSER_RELEASE: 454
+  ZEPHIR_VERSION: 0.11.8
 
 matrix:
   fast_finish: true
@@ -46,8 +47,9 @@ install:
   - ps: InstallPhp        $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
-  - ps: TuneUpPhp
+  - ps: TuneUpPhp -DefaultExtensions fileinfo
   - ps: InstallComposer
+  - ps: InstallZephir -Version $Env:ZEPHIR_VERSION
 
 before_build:
   - ps: >-
@@ -77,6 +79,7 @@ build_script:
 
 test_script:
   - cmd: 'composer --version'
+  - cmd: 'zephir --version'
 
 after_test:
   - ps: >-
