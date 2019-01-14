@@ -183,17 +183,19 @@ function InstallZephirParser {
 
 function InstallComposer {
 	param (
-		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php'
+		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
-	$ComposerBatch = "${Env:APPVEYOR_BUILD_FOLDER}\composer.bat"
+	$InstallPath = ResolvePath -Path $InstallPath
 
-	if (-not (Test-Path -Path $ComposerBatch)) {
-		$ComposerPhar = "${Env:APPVEYOR_BUILD_FOLDER}\composer.phar"
+	$ComposerBatch = "${InstallPath}\composer.bat"
+	$ComposerPhar  = "${InstallPath}\composer.phar"
 
+	if (-not (Test-Path -Path $ComposerPhar)) {
 		DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
 
-		Write-Output '@echo off' | Out-File -Encoding "ASCII" -Append $ComposerBatch
+		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ComposerBatch
 		Write-Output "${PhpPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
 	}
 }
@@ -201,13 +203,15 @@ function InstallComposer {
 function InstallZephir {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Version,
-		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php'
+		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
-	$ZephirBatch = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.bat"
+	$InstallPath = ResolvePath -Path $InstallPath
+	$ZephirBatch = "${InstallPath}\zephir.bat"
 
 	if (-not (Test-Path -Path $ZephirBatch)) {
-		$ZephirPhar = "${Env:APPVEYOR_BUILD_FOLDER}\zephir.phar"
+		$ZephirPhar = "${InstallPath}\zephir.phar"
 
 		$BaseUri = "https://github.com/phalcon/zephir/releases/download"
 		$RemoteUrl = "${BaseUri}/${Version}/zephir.phar"
@@ -297,10 +301,11 @@ function PrepareReleaseNote {
 		[Parameter(Mandatory=$true)]  [System.String] $BuildType,
 		[Parameter(Mandatory=$true)]  [System.String] $Platform,
 		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile,
-		[Parameter(Mandatory=$false)] [System.String] $ReleaseDirectory
+		[Parameter(Mandatory=$false)] [System.String] $ReleaseDirectory,
+		[Parameter(Mandatory=$false)] [System.String] $BasePath
 	)
 
-	$Destination = "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}"
+	$Destination = "${BasePath}\${ReleaseDirectory}"
 
 	if (-not (Test-Path $Destination)) {
 		New-Item -ItemType Directory -Force -Path "${Destination}" | Out-Null
@@ -332,9 +337,11 @@ function PrepareReleasePackage {
 		[Parameter(Mandatory=$false)] [System.String] $ZipballName = '',
 		[Parameter(Mandatory=$false)] [System.String[]] $ReleaseFiles = @(),
 		[Parameter(Mandatory=$false)] [System.String] $ReleaseFile = 'RELEASE.txt',
-		[Parameter(Mandatory=$false)] [System.Boolean] $ConverMdToHtml = $false
+		[Parameter(Mandatory=$false)] [System.Boolean] $ConverMdToHtml = $false,
+		[Parameter(Mandatory=$false)] [System.String] $BasePath = '.'
 	)
 
+	$BasePath = ResolvePath -Path $BasePath
 	$ReleaseDirectory = "${Env:APPVEYOR_PROJECT_NAME}-${Env:APPVEYOR_BUILD_ID}-${Env:APPVEYOR_JOB_ID}-${Env:APPVEYOR_JOB_NUMBER}"
 
 	PrepareReleaseNote `
@@ -342,9 +349,10 @@ function PrepareReleasePackage {
 		-BuildType        $BuildType `
 		-Platform         $Platform `
 		-ReleaseFile      $ReleaseFile `
-		-ReleaseDirectory $ReleaseDirectory
+		-ReleaseDirectory $ReleaseDirectory `
+		-BasePath         $BasePath
 
-	$ReleaseDestination = "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}"
+	$ReleaseDestination = "${BasePath}\${ReleaseDirectory}"
 
 	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
 
@@ -382,25 +390,27 @@ function PrepareReleasePackage {
 		throw "An error occurred while creating release zippbal: `"${ZipballName}`". ${Output}"
 	}
 
-	Move-Item "${ZipballName}.zip" -Destination "${Env:APPVEYOR_BUILD_FOLDER}"
+	Move-Item "${ZipballName}.zip" -Destination "${BasePath}"
 	Set-Location "${CurrentPath}"
 }
 
 function FormatReleaseFiles {
 	param (
-		[Parameter(Mandatory=$true)]  [System.String] $ReleaseDirectory
+		[Parameter(Mandatory=$true)]  [System.String] $ReleaseDirectory,
+		[Parameter(Mandatory=$false)] [System.String] $BasePath = '.'
 	)
 
 	EnsurePandocIsInstalled
 
 	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
 
-	Set-Location "${Env:APPVEYOR_BUILD_FOLDER}"
+	$BasePath = ResolvePath -Path $BasePath
+	Set-Location "${BasePath}"
 
 	Get-ChildItem (Get-Item -Path ".\" -Verbose).FullName *.md |
 	ForEach-Object{
 		$BaseName = $_.BaseName
-		pandoc -f markdown -t html5 "${BaseName}.md" > "${Env:APPVEYOR_BUILD_FOLDER}\${ReleaseDirectory}\${BaseName}.html"
+		pandoc -f markdown -t html5 "${BaseName}.md" > "${BasePath}\${ReleaseDirectory}\${BaseName}.html"
 	}
 
 	Set-Location "${CurrentPath}"
@@ -449,6 +459,11 @@ function Ensure7ZipIsInstalled  {
 function InstallReleaseDependencies {
 	EnsureChocolateyIsInstalled
 	$Output = (choco install -y --no-progress pandoc)
+	$ExitCode = $LASTEXITCODE
+
+	if ($ExitCode -ne 0) {
+		throw "An error occurred while installing pandoc. ${Output}"
+	}
 }
 
 function EnsureChocolateyIsInstalled {
@@ -513,7 +528,7 @@ function DownloadFile {
 	$WebClient = New-Object System.Net.WebClient
 	$WebClient.Headers.Add('User-Agent', 'AppVeyor PowerShell Script')
 
-	Write-Debug "Downloading: ${RemoteUrl} => ${Destination} ..."
+	Write-Debug "Downloading: '${RemoteUrl}' => '${Destination}' ..."
 
 	while (-not $Completed) {
 		try {
@@ -529,6 +544,18 @@ function DownloadFile {
 			}
 		}
 	}
+}
+
+function ResolvePath {
+	param (
+		[Parameter(Mandatory=$true)] [System.String] $Path
+	)
+
+	if ($Path -eq '.') {
+		$Path = Get-Location | Select-Object Path -expandproperty Path
+	}
+
+	Write-Output $Path
 }
 
 function Expand-Item7zip {
