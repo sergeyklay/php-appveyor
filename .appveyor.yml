@@ -47,6 +47,7 @@ install:
   - ps: InstallPhpDevPack $Env:PHP_VERSION $Env:BUILD_TYPE $Env:VC_VERSION $Env:PLATFORM
 
   - ps: TuneUpPhp
+  - ps: InstallComposer
 
 before_build:
   - ps: >-
@@ -67,13 +68,15 @@ before_build:
         -VC         $Env:VC_VERSION `
         -Platform   $Env:PLATFORM
 
-build_script:
   - ps: EnablePhpExtension -Name psr
   - ps: EnablePhpExtension -Name zephir_parser -PrintableName "Zephir Parser"
 
-test_script:
+build_script:
   - ps: (& C:\php\php.exe --ri psr)
   - ps: (& C:\php\php.exe --ri "Zephir Parser")
+
+test_script:
+  - cmd: 'composer --version'
 
 after_test:
   - ps: >-

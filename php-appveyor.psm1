@@ -181,6 +181,24 @@ function InstallZephirParser {
 	}
 }
 
+function InstallComposer {
+	param (
+		[Parameter(Mandatory=$false)] [System.String] $BatchFile = 'composer.bat',
+		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php'
+	)
+
+	$ComposerBatch = "${Env:APPVEYOR_BUILD_FOLDER}\composer.bat"
+
+	if (-not (Test-Path -Path $ComposerBatch)) {
+		$ComposerPhar = "${Env:APPVEYOR_BUILD_FOLDER}\composer.phar"
+
+		DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
+
+		Write-Output '@echo off' | Out-File -Encoding "ASCII" -Append $ComposerBatch
+		Write-Output "${PhpPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
+	}
+}
+
 function EnablePhpExtension {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Name,
