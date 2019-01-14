@@ -171,7 +171,7 @@ function InstallZephirParser {
 			DownloadFile $RemoteUrl $DestinationPath
 		}
 
-		Expand-Item7zip $DestinationPath "${Env:PHP_PATH}\ext"
+		Expand-Item7zip $DestinationPath "${InstallPath}"
 	}
 
 	if ($Enable) {
@@ -207,15 +207,14 @@ function EnablePhpExtension {
 
 	if (Test-Path -Path "${PhpExe}") {
 		if ($PrintableName) {
-			Write-Debug "Execute command `"${PhpExe} --ri ${PrintableName}`""
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri `"${PrintableName}`""
 			$Result = (& "${PhpExe}" --ri "${PrintableName}")
 		} else {
-			Write-Debug "Execute command `"${PhpExe} --ri ${PrintableName}`""
-			$Result = (& "${PhpExe}" --ri "${Name}")
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri ${Name}"
+			$Result = (& "${PhpExe}" --ri $Name)
 		}
 
 		$ExitCode = $LASTEXITCODE
-
 		if ($ExitCode -ne 0) {
 			throw "An error occurred while enabling ${Name} at ${IniFile}. ${Result}"
 		}
