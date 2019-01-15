@@ -93,11 +93,15 @@ function InstallPhpDevPack {
 		}
 
 		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
-		if (-not (Test-Path "$UnzipPath")) {
+		if (-not (Test-Path "${UnzipPath}\phpize.bat")) {
 			Expand-Item7zip $Archive $Env:Temp
 		}
 
-		Move-Item -Path $UnzipPath -Destination $InstallPath
+		if (Test-Path "${InstallPath}") {
+			Move-Item -Path "${UnzipPath}\*" -Destination $InstallPath
+		} else {
+			Move-Item -Path $UnzipPath -Destination $InstallPath
+		}
 	}
 }
 
@@ -183,7 +187,7 @@ function InstallZephirParser {
 
 function InstallComposer {
 	param (
-		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $PhpInstallPath = 'C:\php',
 		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
@@ -196,14 +200,14 @@ function InstallComposer {
 		DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
 
 		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ComposerBatch
-		Write-Output "${PhpPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
+		Write-Output "${PhpInstallPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
 	}
 }
 
 function InstallZephir {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Version,
-		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $PhpInstallPath = 'C:\php',
 		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
@@ -219,22 +223,22 @@ function InstallZephir {
 		DownloadFile "${RemoteUrl}" "${ZephirPhar}"
 
 		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ZephirBatch
-		Write-Output "${PhpPath}\php.exe `"${ZephirPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ZephirBatch
+		Write-Output "${PhpInstallPath}\php.exe `"${ZephirPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ZephirBatch
 	}
 }
 
 function EnablePhpExtension {
 	param (
 		[Parameter(Mandatory=$true)]  [System.String] $Name,
-		[Parameter(Mandatory=$false)] [System.String] $PhpPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $PhpInstallPath = 'C:\php',
 		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext',
 		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
 	)
 
 	$FullyQualifiedExtensionPath = "${ExtPath}\php_${Name}.dll"
 
-	$IniFile = "${PhpPath}\php.ini"
-	$PhpExe  = "${PhpPath}\php.exe"
+	$IniFile = "${PhpInstallPath}\php.ini"
+	$PhpExe  = "${PhpInstallPath}\php.exe"
 
 	if (-not (Test-Path $IniFile)) {
 		throw "Unable to locate ${IniFile}"
