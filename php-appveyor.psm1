@@ -187,7 +187,7 @@ function InstallComposer {
 		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
-	$InstallPath = ResolvePath -Path $InstallPath
+	$InstallPath = Resolve-Path $InstallPath
 
 	$ComposerBatch = "${InstallPath}\composer.bat"
 	$ComposerPhar  = "${InstallPath}\composer.phar"
@@ -207,7 +207,7 @@ function InstallZephir {
 		[Parameter(Mandatory=$false)] [System.String] $InstallPath = '.'
 	)
 
-	$InstallPath = ResolvePath -Path $InstallPath
+	$InstallPath = Resolve-Path $InstallPath
 
 	$ZephirPhar  = "${InstallPath}\zephir.phar"
 	$ZephirBatch = "${InstallPath}\zephir.bat"
@@ -341,7 +341,7 @@ function PrepareReleasePackage {
 		[Parameter(Mandatory=$false)] [System.String] $BasePath = '.'
 	)
 
-	$BasePath = ResolvePath -Path $BasePath
+	$BasePath = Resolve-Path $BasePath
 	$ReleaseDirectory = "${Env:APPVEYOR_PROJECT_NAME}-${Env:APPVEYOR_BUILD_ID}-${Env:APPVEYOR_JOB_ID}-${Env:APPVEYOR_JOB_NUMBER}"
 
 	PrepareReleaseNote `
@@ -354,7 +354,7 @@ function PrepareReleasePackage {
 
 	$ReleaseDestination = "${BasePath}\${ReleaseDirectory}"
 
-	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
+	$CurrentPath = Resolve-Path '.'
 
 	if ($ConverMdToHtml) {
 		InstallReleaseDependencies
@@ -404,7 +404,7 @@ function FormatReleaseFiles {
 
 	$CurrentPath = (Get-Item -Path ".\" -Verbose).FullName
 
-	$BasePath = ResolvePath -Path $BasePath
+	$BasePath = Resolve-Path $BasePath
 	Set-Location "${BasePath}"
 
 	Get-ChildItem (Get-Item -Path ".\" -Verbose).FullName *.md |
@@ -544,18 +544,6 @@ function DownloadFile {
 			}
 		}
 	}
-}
-
-function ResolvePath {
-	param (
-		[Parameter(Mandatory=$true)] [System.String] $Path
-	)
-
-	if ($Path -eq '.') {
-		$Path = Get-Location | Select-Object Path -expandproperty Path
-	}
-
-	Write-Output $Path
 }
 
 function Expand-Item7zip {
