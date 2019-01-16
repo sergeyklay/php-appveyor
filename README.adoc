@@ -25,7 +25,7 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
   # Specify required PHP SDK binary tools if you need SDK
-  PHP_SDK_VERSION: 2.1.9 # 2
+  PHP_SDK_VERSION: 2.1.9
 
   PHP_AVM: https://raw.githubusercontent.com/sergeyklay/php-appveyor/master/php-appveyor.psm1
 
@@ -33,12 +33,12 @@ environment:
 cache:
   # The C:\Downloads directory will be used as a storage for downloaded archives.
   # So you may want to cache it.
-  - 'C:\Downloads -> .appveyor.yml' # 3
+  - 'C:\Downloads -> .appveyor.yml'
 
 # Specify required architecture.
 # Supported architectures are ``x86`` and ``x64``
 platform:
-  - x64 # 4
+  - x64
 
 install:
   # Download php-appveyor.psm1 module and invoke it to the current session
