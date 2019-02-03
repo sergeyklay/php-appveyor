@@ -1,12 +1,14 @@
 = ``php-appveyor.psm1``
 Serghei Iakovlev <https://github.com/sergeyklay[@sergeyklay]>;
-:doctype: article
-:reproducible:
-:source-highlighter: prettify
+// settings:
+:source-language: yaml
+:language: {source-language}
+:source-highlighter: coderay
 
 Install PHP and its tooling on AppVeyor CI.
 
-``php-appveyor.psm1`` is a small PowerShell script which provides functions to install stable PHP versions, PHP DevPack, PHP SDK binary tools and doing some usual provision tasks on the AppVeyor CI.
+``php-appveyor.psm1`` is a small PowerShell script which provides functions to install stable
+PHP versions, PHP DevPack, PHP SDK binary tools and doing some usual provision tasks on the AppVeyor CI.
 
 == Usage
 
@@ -71,6 +73,11 @@ build_script:
 ----
 
 For more completely example see ``.appveyor.yml`` of this project.
+
+== Real world projects with ``php-appveyor.psm1``
+
+* https://github.com/phalcon/cphalcon[Phalcon Framework] - High performance, full-stack PHP framework delivered as a C extension
+* https://github.com/phalcon/php-zephir-parser[PHP Zephir Parser] - The Zephir Parser delivered as a C extension for the PHP language
 
 == License
 
