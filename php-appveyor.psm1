@@ -50,12 +50,19 @@ function InstallPhp {
 	)
 
 	SetupPrerequisites
-	$Version = SetupPhpVersionString -Pattern $Version
+	$FullVersion = SetupPhpVersionString -Pattern $Version
 
-	Write-Debug "Install PHP v${Version}"
+	Write-Debug "Install PHP v${FullVersion}"
 
-	$RemoteUrl = "http://windows.php.net/downloads/releases/php-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
-	$Archive   = "C:\Downloads\php-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
+	$ReleasesPart = "releases"
+	if ([System.Convert]::ToDecimal($Version) -lt 7.1) {
+		$ReleasesPart = "releases/archives"
+	}
+
+	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-{1}-{2}-vc{3}-{4}.zip" -f
+	$ReleasesPart, $FullVersion, $BuildType, $VC, $Platform
+
+	$Archive   = "C:\Downloads\php-${FullVersion}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\php.exe")) {
 		if (-not (Test-Path $Archive)) {
@@ -84,7 +91,14 @@ function InstallPhpDevPack {
 
 	Write-Debug "Install PHP Dev for PHP v${Version}"
 
-	$RemoteUrl = "http://windows.php.net/downloads/releases/php-devel-pack-${Version}-${BuildType}-vc${VC}-${Platform}.zip"
+	$ReleasesPart = "releases"
+	if ([System.Convert]::ToDecimal($PhpVersion) -lt 7.1) {
+		$ReleasesPart = "releases/archives"
+	}
+
+	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-devel-pack-{1}-{2}-vc{3}-{4}.zip" -f
+	$ReleasesPart, $Version, $BuildType, $VC, $Platform
+
 	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\phpize.bat")) {
