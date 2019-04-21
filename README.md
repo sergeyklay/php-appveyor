@@ -1,21 +1,16 @@
-= ``php-appveyor.psm1``
-Serghei Iakovlev <https://github.com/sergeyklay[@sergeyklay]>;
-// settings:
-:source-language: yaml
-:language: {source-language}
-:source-highlighter: coderay
+# `php-appveyor.psm1`
 
 Install PHP and its tooling on AppVeyor CI.
 
-``php-appveyor.psm1`` is a small PowerShell script which provides functions to install stable
-PHP versions, PHP DevPack, PHP SDK binary tools and doing some usual provision tasks on the AppVeyor CI.
+`php-appveyor.psm1` is a small PowerShell script which provides functions to
+install stable PHP versions, PHP DevPack, PHP SDK binary tools and doing some
+usual provision tasks on the AppVeyor CI.
 
-== Usage
+## Usage
 
-Add the following to your ``.appveyor.yml``:
+Add the following to your `.appveyor.yml` file:
 
-[source,yml]
-----
+``` yaml
 environment:
   # Use this matrix as an example
   matrix:
@@ -70,16 +65,22 @@ install:
 
 build_script:
   # Your code here
-----
+```
 
-For more completely example see ``.appveyor.yml`` of this project.
+For more completely example see `.appveyor.yml` in this project.
 
-== Real world projects with ``php-appveyor.psm1``
+## Real world projects with `php-appveyor.psm1`
 
-* https://github.com/phalcon/cphalcon[Phalcon Framework] - High performance, full-stack PHP framework delivered as a C extension
-* https://github.com/phalcon/php-zephir-parser[PHP Zephir Parser] - The Zephir Parser delivered as a C extension for the PHP language
+- [Phalcon Framework][1] - High performance, full-stack PHP framework delivered
+  as a C extension
+- [PHP Zephir Parser][2] - The Zephir Parser delivered as a C extension for the
+  PHP language
 
-== License
+# License
 
-``php-appveyor.psm1`` is open source software licensed under the MIT License (MIT).
-See the https://github.com/sergeyklay/php-appveyor/blob/master/LICENSE[LICENSE] file for more information.
+`php-appveyor.psm1` is open source software licensed under the MIT License (MIT).
+See the [LICENSE][3] file for more information.
+
+[1]: https://github.com/phalcon/cphalcon
+[2]: https://github.com/phalcon/php-zephir-parser
+[3]: https://github.com/sergeyklay/php-appveyor/blob/master/LICENSE
