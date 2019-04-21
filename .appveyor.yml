@@ -92,7 +92,7 @@ after_test:
         -BuildType      $Env:BUILD_TYPE `
         -Platform       $Env:PLATFORM `
         -ZipballName    php-appveyor `
-        -ReleaseFiles   LICENSE,README.adoc `
+        -ReleaseFiles   LICENSE,README.md `
         -ConverMdToHtml $true
 
 artifacts:
