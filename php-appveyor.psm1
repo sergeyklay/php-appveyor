@@ -374,6 +374,7 @@ function PrepareReleasePackage {
 
 	$CurrentPath = Resolve-Path '.'
 
+	# FIXME: pandoc installer is broken
 	# if ($ConverMdToHtml) {
 	# 	InstallReleaseDependencies
 	# 	FormatReleaseFiles -ReleaseDirectory $ReleaseDirectory
