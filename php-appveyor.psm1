@@ -374,10 +374,10 @@ function PrepareReleasePackage {
 
 	$CurrentPath = Resolve-Path '.'
 
-	if ($ConverMdToHtml) {
-		InstallReleaseDependencies
-		FormatReleaseFiles -ReleaseDirectory $ReleaseDirectory
-	}
+	# if ($ConverMdToHtml) {
+	# 	InstallReleaseDependencies
+	# 	FormatReleaseFiles -ReleaseDirectory $ReleaseDirectory
+	# }
 
 	if ($ReleaseFiles.count -gt 0) {
 		foreach ($File in $ReleaseFiles) {
