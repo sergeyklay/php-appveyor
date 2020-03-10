@@ -55,7 +55,7 @@ function InstallPhp {
 	Write-Debug "Install PHP v${FullVersion}"
 
 	$ReleasesPart = "releases"
-	if ([System.Convert]::ToDecimal($Version) -lt 7.1) {
+	if ([System.Convert]::ToDecimal($Version) -lt 7.2) {
 		$ReleasesPart = "releases/archives"
 	}
 
@@ -92,7 +92,7 @@ function InstallPhpDevPack {
 	Write-Debug "Install PHP Dev for PHP v${Version}"
 
 	$ReleasesPart = "releases"
-	if ([System.Convert]::ToDecimal($PhpVersion) -lt 7.1) {
+	if ([System.Convert]::ToDecimal($PhpVersion) -lt 7.2) {
 		$ReleasesPart = "releases/archives"
 	}
 
