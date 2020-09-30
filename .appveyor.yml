@@ -2,10 +2,10 @@ version: 1.0.0+{build}
 
 environment:
   matrix:
-    - PHP_VERSION: 7.2
-      VC_VERSION: 15
+    - PHP_VERSION: 7.0
+      VC_VERSION: 14
       BUILD_TYPE: Win32
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
 
     - PHP_VERSION: 7.3
       VC_VERSION: 15
