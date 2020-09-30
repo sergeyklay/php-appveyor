@@ -448,7 +448,7 @@ function SetupPhpVersionString {
 	}
 
 	$VersionString = Get-Content $Destination | Where-Object {
-		$_ -match "php-($Pattern\.\d+(?:-\d+))-src"
+		$_ -match "php-($Pattern\.\d+(?:-\d+)?)-src"
 	} | ForEach-Object { $matches[1] }
 
 	if ($VersionString -NotMatch '\d+\.\d+\.\d+' -or $null -eq $VersionString) {
