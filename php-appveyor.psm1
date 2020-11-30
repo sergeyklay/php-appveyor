@@ -63,7 +63,7 @@ function InstallPhp {
 	# For all PHP 7.x - prefix was `vc`
 	# From PHP 8.0 - prefix changed to `vs`
 	$CompilerVersion = "vc${VC}"
-	if ([System.Convert]::ToDecimal($Version) -ge 8.0) {
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
 		$CompilerVersion = "vs${VC}"
 	}
 
@@ -108,7 +108,7 @@ function InstallPhpDevPack {
 	# For all PHP 7.x - prefix was `vc`
 	# From PHP 8.0 - prefix changed to `vs`
 	$CompilerVersion = "vc${VC}"
-	if ([System.Convert]::ToDecimal($Version) -ge 8.0) {
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
 		$CompilerVersion = "vs${VC}"
 	}
 
