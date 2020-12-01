@@ -163,7 +163,7 @@ function InstallPeclExtension {
 	}
 
 	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${PackageVersion}"
-	$LocalPart = "php_${Name}-${Version}-${CompatiblePhpVersion}"
+	$LocalPart = "php_${Name}-${PackageVersion}-${CompatiblePhpVersion}"
 
 	if ($BuildType -Match "nts-Win32") {
 		$TS = "nts"
