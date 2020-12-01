@@ -149,8 +149,21 @@ function InstallPeclExtension {
 
 	SetupPrerequisites
 
-	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${Version}"
-	$LocalPart = "php_${Name}-${Version}-${PhpVersion}"
+	# Workaround for PHP 8 PSR extansion
+	# Because we don't have special archive for php 8
+	# we must to use latest PSR release for PHP 7.4 :)
+	# Example:
+	# https://windows.php.net/downloads/pecl/releases/psr/1.0.1/php_psr-1.0.1-7.4-ts-vc15-x86.zip
+	$PackageVersion = $Version
+	$CompatiblePhpVersion = $PhpVersion
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+		$PackageVersion = "1.0.1"
+		$CompatiblePhpVersion = "7.4"
+		$VC = "15"
+	}
+
+	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${PackageVersion}"
+	$LocalPart = "php_${Name}-${Version}-${CompatiblePhpVersion}"
 
 	if ($BuildType -Match "nts-Win32") {
 		$TS = "nts"
