@@ -300,7 +300,7 @@ function EnablePhpExtension {
 			$Result = (& "${PhpExe}" --ri "${PrintableName}")
 		} else {
 			Write-Debug "Minimal load test using command: ${PhpExe} --ri ${Name}"
-			$Result = (& "${PhpExe}" --ri $Name)
+			$Result = (& "${PhpExe}" --ri "${Name}")
 		}
 
 		$ExitCode = $LASTEXITCODE
