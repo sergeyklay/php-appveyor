@@ -149,7 +149,7 @@ function InstallPeclExtension {
 
 	SetupPrerequisites
 
-	# Workaround for PHP 8 PSR extansion
+	# Workaround for PHP 8 PSR extension
 	# Because we don't have special archive for php 8
 	# we must to use latest PSR release for PHP 7.4 :)
 	# Example:
