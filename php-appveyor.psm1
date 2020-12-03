@@ -59,10 +59,18 @@ function InstallPhp {
 		$ReleasesPart = "releases/archives"
 	}
 
-	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-{1}-{2}-vc{3}-{4}.zip" -f
-	$ReleasesPart, $FullVersion, $BuildType, $VC, $Platform
+	# Workaround for different prefix for compiler version
+	# For all PHP 7.x - prefix was `vc`
+	# From PHP 8.0 - prefix changed to `vs`
+	$CompilerVersion = "vc${VC}"
+	if ([System.Convert]::ToDecimal($Version) -ge 8.0) {
+		$CompilerVersion = "vs${VC}"
+	}
 
-	$Archive   = "C:\Downloads\php-${FullVersion}-${BuildType}-VC${VC}-${Platform}.zip"
+	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-{1}-{2}-{3}-{4}.zip" -f
+	$ReleasesPart, $FullVersion, $BuildType, $CompilerVersion, $Platform
+
+	$Archive   = "C:\Downloads\php-${FullVersion}-${BuildType}-${CompilerVersion}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\php.exe")) {
 		if (-not (Test-Path $Archive)) {
@@ -96,17 +104,25 @@ function InstallPhpDevPack {
 		$ReleasesPart = "releases/archives"
 	}
 
-	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-devel-pack-{1}-{2}-vc{3}-{4}.zip" -f
-	$ReleasesPart, $Version, $BuildType, $VC, $Platform
+	# Workaround for different prefix for compiler version
+	# For all PHP 7.x - prefix was `vc`
+	# From PHP 8.0 - prefix changed to `vs`
+	$CompilerVersion = "vc${VC}"
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+		$CompilerVersion = "vs${VC}"
+	}
 
-	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-VC${VC}-${Platform}.zip"
+	$RemoteUrl = "http://windows.php.net/downloads/{0}/php-devel-pack-{1}-{2}-{3}-{4}.zip" -f
+	$ReleasesPart, $Version, $BuildType, $CompilerVersion, $Platform
+
+	$Archive   = "C:\Downloads\php-devel-pack-${Version}-${BuildType}-${CompilerVersion}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\phpize.bat")) {
 		if (-not (Test-Path $Archive)) {
 			DownloadFile $RemoteUrl $Archive
 		}
 
-		$UnzipPath = "${Env:Temp}\php-${Version}-devel-VC${VC}-${Platform}"
+		$UnzipPath = "${Env:Temp}\php-${Version}-devel-${CompilerVersion}-${Platform}"
 		if (-not (Test-Path "${UnzipPath}\phpize.bat")) {
 			Expand-Item7zip $Archive $Env:Temp
 		}
@@ -133,8 +149,21 @@ function InstallPeclExtension {
 
 	SetupPrerequisites
 
-	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${Version}"
-	$LocalPart = "php_${Name}-${Version}-${PhpVersion}"
+	# Workaround for PHP 8 PSR extension
+	# Because we don't have special archive for php 8
+	# we must to use latest PSR release for PHP 7.4 :)
+	# Example:
+	# https://windows.php.net/downloads/pecl/releases/psr/1.0.1/php_psr-1.0.1-7.4-ts-vc15-x86.zip
+	$PackageVersion = $Version
+	$CompatiblePhpVersion = $PhpVersion
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+		$PackageVersion = "1.0.1"
+		$CompatiblePhpVersion = "7.4"
+		$VC = "15"
+	}
+
+	$BaseUri = "https://windows.php.net/downloads/pecl/releases/${Name}/${PackageVersion}"
+	$LocalPart = "php_${Name}-${PackageVersion}-${CompatiblePhpVersion}"
 
 	if ($BuildType -Match "nts-Win32") {
 		$TS = "nts"
@@ -271,7 +300,7 @@ function EnablePhpExtension {
 			$Result = (& "${PhpExe}" --ri "${PrintableName}")
 		} else {
 			Write-Debug "Minimal load test using command: ${PhpExe} --ri ${Name}"
-			$Result = (& "${PhpExe}" --ri $Name)
+			$Result = (& "${PhpExe}" --ri "${Name}")
 		}
 
 		$ExitCode = $LASTEXITCODE
