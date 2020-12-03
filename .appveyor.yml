@@ -109,3 +109,10 @@ artifacts:
   - path: '.\php-appveyor.zip'
     type: zip
     name: php-appveyor
+
+on_failure:
+  - ps: >-
+      if (Test-Path -Path "C:\php\php.ini") {
+        Get-Content -Path "C:\php\php.ini"
+      }
+      Get-ChildItem -Path "C:\php\ext\"
