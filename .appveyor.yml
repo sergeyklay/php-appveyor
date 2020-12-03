@@ -66,6 +66,7 @@ install:
   - ps: InstallZephir -Version $Env:ZEPHIR_VERSION
 
 before_build:
+  - php -i | grep "Loaded Configuration File"
   - ps: >-
       InstallPeclExtension `
         -Name       psr `
