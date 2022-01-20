@@ -156,7 +156,7 @@ function InstallPeclExtension {
 	# https://windows.php.net/downloads/pecl/releases/psr/1.0.1/php_psr-1.0.1-7.4-ts-vc15-x86.zip
 	$PackageVersion = $Version
 	$CompatiblePhpVersion = $PhpVersion
-	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+	if (([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) -and ($Name -Match "psr")) {
 		$PackageVersion = "1.0.1"
 		$CompatiblePhpVersion = "7.4"
 		$VC = "15"
@@ -171,8 +171,14 @@ function InstallPeclExtension {
 		$TS = "ts"
 	}
 
-	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
-	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
+	# A workaround for php 8.0
+	$CompilerVersion = "vc${VC}"
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+		$CompilerVersion = "vs${VC}"
+	}
+
+	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-${CompilerVersion}-${Platform}.zip"
+	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-${CompilerVersion}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\php_${Name}.dll")) {
 		if (-not (Test-Path $DestinationPath)) {
