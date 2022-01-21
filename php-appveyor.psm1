@@ -300,7 +300,6 @@ function EnablePhpExtension {
 	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
 	if ($Name -Match "xdebug") {
 		Write-Output "zend_extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
-		Write-Output "xdebug zend_extension installed"
 	} else {
 		Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 	}
