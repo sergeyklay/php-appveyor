@@ -298,11 +298,47 @@ function EnablePhpExtension {
 	}
 
 	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
-	if ($Name -Match "xdebug") {
-		Write-Output "zend_extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
-	} else {
-		Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
+	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
+
+	if (Test-Path -Path "${PhpExe}") {
+		if ($PrintableName) {
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri `"${PrintableName}`""
+			$Result = (& "${PhpExe}" --ri "${PrintableName}")
+		} else {
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri ${Name}"
+			$Result = (& "${PhpExe}" --ri "${Name}")
+		}
+
+		$ExitCode = $LASTEXITCODE
+		if ($ExitCode -ne 0) {
+			throw "An error occurred while enabling ${Name} at ${IniFile}. ${Result}"
+		}
 	}
+}
+
+function EnableZendExtension {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Name,
+		[Parameter(Mandatory=$false)] [System.String] $PhpInstallPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext',
+		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
+	)
+
+	$FullyQualifiedExtensionPath = "${ExtPath}\php_${Name}.dll"
+
+	$IniFile = "${PhpInstallPath}\php.ini"
+	$PhpExe  = "${PhpInstallPath}\php.exe"
+
+	if (-not (Test-Path $IniFile)) {
+		throw "Unable to locate ${IniFile}"
+	}
+
+	if (-not (Test-Path "${ExtPath}")) {
+		throw "Unable to locate ${ExtPath} direcory"
+	}
+
+	Write-Debug "Add `"zend_extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
+	Write-Output "zend_extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 
 	if (Test-Path -Path "${PhpExe}") {
 		if ($PrintableName) {
