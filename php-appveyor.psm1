@@ -246,9 +246,9 @@ function InstallComposer {
 	$ComposerPhar  = "${InstallPath}\composer.phar"
 
 	if (-not (Test-Path -Path $ComposerPhar)) {
-		Invoke-Expression "php -r `"copy('https://getcomposer.org/installer', 'composer-setup.php');`""
-		Invoke-Expression "php composer-setup.php"
-		Invoke-Expression "php -r `"unlink('composer-setup.php');`""
+		Invoke-Expression "${PhpInstallPath}\php.exe -r `"copy('https://getcomposer.org/installer', 'composer-setup.php');`""
+		Invoke-Expression "${PhpInstallPath}\php.exe composer-setup.php"
+		Invoke-Expression "${PhpInstallPath}\php.exe -r `"unlink('composer-setup.php');`""
 		#DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
 
 		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ComposerBatch
