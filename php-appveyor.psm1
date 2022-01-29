@@ -156,7 +156,7 @@ function InstallPeclExtension {
 	# https://windows.php.net/downloads/pecl/releases/psr/1.0.1/php_psr-1.0.1-7.4-ts-vc15-x86.zip
 	$PackageVersion = $Version
 	$CompatiblePhpVersion = $PhpVersion
-	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+	if (([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) -and ($Name -Match "psr")) {
 		$PackageVersion = "1.0.1"
 		$CompatiblePhpVersion = "7.4"
 		$VC = "15"
@@ -171,8 +171,14 @@ function InstallPeclExtension {
 		$TS = "ts"
 	}
 
-	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
-	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-vc${VC}-${Platform}.zip"
+	# A workaround for php 8.0
+	$CompilerVersion = "vc${VC}"
+	if ([System.Convert]::ToDecimal($PhpVersion) -ge 8.0) {
+		$CompilerVersion = "vs${VC}"
+	}
+
+	$RemoteUrl = "${BaseUri}/${LocalPart}-${TS}-${CompilerVersion}-${Platform}.zip"
+	$DestinationPath = "C:\Downloads\${LocalPart}-${TS}-${CompilerVersion}-${Platform}.zip"
 
 	if (-not (Test-Path "${InstallPath}\php_${Name}.dll")) {
 		if (-not (Test-Path $DestinationPath)) {
@@ -240,7 +246,11 @@ function InstallComposer {
 	$ComposerPhar  = "${InstallPath}\composer.phar"
 
 	if (-not (Test-Path -Path $ComposerPhar)) {
-		DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
+		EnablePhpExtension -Name openssl
+		Invoke-Expression "${PhpInstallPath}\php.exe -r `"copy('https://getcomposer.org/installer', 'composer-setup.php');`""
+		Invoke-Expression "${PhpInstallPath}\php.exe composer-setup.php"
+		Invoke-Expression "${PhpInstallPath}\php.exe -r `"unlink('composer-setup.php');`""
+		#DownloadFile "https://getcomposer.org/composer.phar" "${ComposerPhar}"
 
 		Write-Output '@echo off' | Out-File -Encoding "ASCII" $ComposerBatch
 		Write-Output "${PhpInstallPath}\php.exe `"${ComposerPhar}`" %*" | Out-File -Encoding "ASCII" -Append $ComposerBatch
@@ -293,6 +303,46 @@ function EnablePhpExtension {
 
 	Write-Debug "Add `"extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
 	Write-Output "extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
+
+	if (Test-Path -Path "${PhpExe}") {
+		if ($PrintableName) {
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri `"${PrintableName}`""
+			$Result = (& "${PhpExe}" --ri "${PrintableName}")
+		} else {
+			Write-Debug "Minimal load test using command: ${PhpExe} --ri ${Name}"
+			$Result = (& "${PhpExe}" --ri "${Name}")
+		}
+
+		$ExitCode = $LASTEXITCODE
+		if ($ExitCode -ne 0) {
+			throw "An error occurred while enabling ${Name} at ${IniFile}. ${Result}"
+		}
+	}
+}
+
+function EnableZendExtension {
+	param (
+		[Parameter(Mandatory=$true)]  [System.String] $Name,
+		[Parameter(Mandatory=$false)] [System.String] $PhpInstallPath = 'C:\php',
+		[Parameter(Mandatory=$false)] [System.String] $ExtPath = 'C:\php\ext',
+		[Parameter(Mandatory=$false)] [System.String] $PrintableName = ''
+	)
+
+	$FullyQualifiedExtensionPath = "${ExtPath}\php_${Name}.dll"
+
+	$IniFile = "${PhpInstallPath}\php.ini"
+	$PhpExe  = "${PhpInstallPath}\php.exe"
+
+	if (-not (Test-Path $IniFile)) {
+		throw "Unable to locate ${IniFile}"
+	}
+
+	if (-not (Test-Path "${ExtPath}")) {
+		throw "Unable to locate ${ExtPath} direcory"
+	}
+
+	Write-Debug "Add `"zend_extension = ${FullyQualifiedExtensionPath}`" to the ${IniFile}"
+	Write-Output "zend_extension = ${FullyQualifiedExtensionPath}"  | Out-File -Encoding "ASCII" -Append $IniFile
 
 	if (Test-Path -Path "${PhpExe}") {
 		if ($PrintableName) {
