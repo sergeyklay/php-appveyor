@@ -246,6 +246,7 @@ function InstallComposer {
 	$ComposerPhar  = "${InstallPath}\composer.phar"
 
 	if (-not (Test-Path -Path $ComposerPhar)) {
+		EnablePhpExtension -Name openssl
 		Invoke-Expression "${PhpInstallPath}\php.exe -r `"copy('https://getcomposer.org/installer', 'composer-setup.php');`""
 		Invoke-Expression "${PhpInstallPath}\php.exe composer-setup.php"
 		Invoke-Expression "${PhpInstallPath}\php.exe -r `"unlink('composer-setup.php');`""
